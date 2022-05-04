@@ -150,9 +150,10 @@ namespace GoDotTest {
         }
         catch (Exception e) {
           errorEncountered = true;
-          reporter.MethodUpdate(suite, method, TestMethodEvent.Failed(e));
+          var innerException = e.InnerException;
+          reporter.MethodUpdate(suite, method, TestMethodEvent.Failed(innerException ?? e));
           if (StopOnError) {
-            throw new StoppedException(e);
+            throw new StoppedException(innerException ?? e);
           }
           if (Sequential || suite.Sequential) { skip = true; }
         }

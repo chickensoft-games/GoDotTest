@@ -41,18 +41,22 @@ namespace GoDotTest {
       Node sceneRoot, ITestEnvironment env, ILog log
     ) {
       if (!env.ShouldRunTests) { return; }
-      var testProvider = new TestProvider();
-      var testPattern = env.TestPatternToRun;
-      var testSuites = (testPattern == null)
-        ? testProvider.GetTestSuites()
-        : testProvider.GetTestSuiteByPattern(testPattern);
-      var testReporter = new TestReporter(log);
-      var testRunner = new TestExecutor(
+      var provider = new TestProvider();
+      var pattern = env.TestPatternToRun;
+      var suites = (pattern == null)
+        ? provider.GetTestSuites()
+        : provider.GetTestSuiteByPattern(pattern);
+      var reporter = new TestReporter(log);
+      var runner = new TestExecutor(
         env.StopOnError,
         env.Sequential,
         10000
       );
-      await testRunner.Run(sceneRoot, testSuites, testReporter);
+      await runner.Run(sceneRoot, suites, reporter);
+      if (env.QuitOnFinish) {
+        var exitCode = reporter.HadError ? 1 : 0;
+        sceneRoot.GetTree().Quit(exitCode);
+      }
     }
   }
 }

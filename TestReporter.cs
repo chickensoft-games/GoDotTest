@@ -57,7 +57,7 @@ namespace GoDotTest {
     > _failures { get; } = new();
 
     /// <summary>True if an error was encountered in any test suite.</summary>
-    protected bool _errorFoundInAnySuite => _failures.Count > 0;
+    public bool HadError => _failures.Count > 0;
 
     /// <summary>Log used to output test results.</summary>
     protected ILog _log { get; }
@@ -113,14 +113,14 @@ namespace GoDotTest {
         _log.Print(Prefix(BLANK) + "Started testing! :3");
       }
       else if (testEvent is TestEvent.Finished) {
-        var smiley = _errorFoundInAnySuite ? ":(" : ":D";
+        var smiley = HadError ? ":(" : ":D";
         _log.Print(Prefix(GOOD) + $"Finished testing! ${smiley}");
       }
     }
 
     /// <inheritdoc/>
     public void OutputFinalReport() {
-      if (_errorFoundInAnySuite) {
+      if (HadError) {
         foreach (var (suite, methods) in _failures) {
           foreach (var method in methods.Keys) {
             var e = methods[method];
