@@ -79,7 +79,7 @@ namespace GoDotTest {
     /// </summary>
     /// <param name="classType">Subclass type of a test suite.</param>
     /// <returns>The test suite.</returns>
-    protected ITestSuite GetTestSuite(Type classType) {
+    public static ITestSuite GetTestSuite(Type classType) {
       var setupMethods = GetMethods(classType, typeof(SetupAttribute));
       var setupAllMethods = GetMethods(classType, typeof(SetupAllAttribute));
       var testMethods = GetMethods(classType, typeof(TestAttribute));
@@ -104,7 +104,7 @@ namespace GoDotTest {
     /// <see cref="TestClass"/>.</param>
     /// <param name="attributeType">Method attribute type to look for.</param>
     /// <returns>The list of annotated test methods.</returns>
-    protected List<ITestMethod> GetMethods(
+    public static List<ITestMethod> GetMethods(
       Type classType, Type attributeType
     ) {
       var methods = classType.GetMethods().Where(methodInfo =>
@@ -128,7 +128,7 @@ namespace GoDotTest {
     /// </summary>
     /// <param name="method">The method in question.</param>
     /// <returns>True or false.</returns>
-    protected bool IsAsync(MethodInfo method)
+    public static bool IsAsync(MethodInfo method)
       => method.GetCustomAttribute<AsyncStateMachineAttribute>(false) != null;
 
     /// <summary>
@@ -138,7 +138,7 @@ namespace GoDotTest {
     /// <param name="str">The string in question.</param>
     /// <param name="pattern">The glob pattern.</param>
     /// <returns>True if the string satisfies the glob pattern.</returns>
-    protected static bool MatchesGlob(string str, string pattern) => new Regex(
+    public static bool MatchesGlob(string str, string pattern) => new Regex(
       "^" +
       Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") +
       "$",
