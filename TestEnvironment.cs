@@ -63,7 +63,7 @@ namespace GoDotTest {
     public string? TestPatternToRun { get; }
 
     /// <summary>Flag which indicates tests should be run.</summary>
-    public const string TEST_FLAG = "--test";
+    public const string TEST_FLAG = "--run-tests";
     /// <summary>Flag which indicates the program should exit on finish.
     /// </summary>
     public const string QUIT_ON_FINISH_FLAG = "--quit-on-finish";

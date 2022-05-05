@@ -127,6 +127,7 @@ namespace GoDotTest {
             _log.Print(
               Prefix(suite, method, BAD) + $"Error occurred: {e.Message}"
             );
+            _log.Print(e);
           }
         }
       }

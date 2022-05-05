@@ -46,7 +46,7 @@ Steps:
       "request": "launch",
       "executable": "${env:GODOT}",
       "executableArguments": [
-        "--test"
+        "--run-tests"
       ],
       "preLaunchTask": "build"
     },
@@ -62,7 +62,7 @@ Steps:
       "request": "launch",
       "executable": "${env:GODOT}",
       "executableArguments": [
-        "--test=${fileBasenameNoExtension}"
+        "--run-tests=${fileBasenameNoExtension}"
       ],
       "preLaunchTask": "build"
     },
