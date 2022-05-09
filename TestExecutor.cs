@@ -30,12 +30,14 @@ namespace GoDotTest {
     /// <summary>
     /// Runs a test suite using the specified node as the scene root.
     /// </summary>
-    /// <param name="suite">Test suite to run.</param>
     /// <param name="sceneRoot">Test scene root node.</param>
+    /// <param name="suites">Test suites to run.</param>
     /// <param name="reporter">Test reporter.</param>
     /// <returns>A future which completes when the test suite finishes
     /// execution.</returns>
-    Task Run(Node sceneRoot, ITestSuite suite, ITestReporter reporter);
+    Task Run(
+      Node sceneRoot, List<ITestSuite> suites, ITestReporter reporter
+    );
   }
 
   /// <summary>
@@ -94,6 +96,7 @@ namespace GoDotTest {
     public async Task Run(
       Node sceneRoot, List<ITestSuite> suites, ITestReporter reporter
     ) {
+      reporter.Update(TestEvent.Started);
       try {
         foreach (var suite in suites) {
           await Run(sceneRoot, suite, reporter);
@@ -103,6 +106,7 @@ namespace GoDotTest {
         // The only exception thrown by `Run` is a StoppedOnException.
       }
       finally {
+        reporter.Update(TestEvent.Finished);
         reporter.OutputFinalReport();
       }
     }
@@ -115,7 +119,7 @@ namespace GoDotTest {
     /// <param name="reporter">Test reporter to receive test events.</param>
     /// <returns>Asynchronous task that completes when the test suite has
     /// finished running.</returns>
-    public async Task Run(
+    protected async Task Run(
       Node sceneRoot, ITestSuite suite, ITestReporter reporter
     ) {
       var instance = (TestClass)Activator.CreateInstance(
