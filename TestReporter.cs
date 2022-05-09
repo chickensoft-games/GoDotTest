@@ -114,7 +114,7 @@ namespace GoDotTest {
       }
       else if (testEvent is TestEvent.Finished) {
         var smiley = HadError ? ":(" : ":D";
-        _log.Print(Prefix(GOOD) + $"Finished testing! ${smiley}");
+        _log.Print(Prefix(GOOD) + $"Finished testing! {smiley}");
       }
     }
 
