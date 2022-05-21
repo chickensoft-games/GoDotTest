@@ -112,12 +112,13 @@ namespace GoDotTest {
       var shouldRunTests = false;
       string? testPatternToRun = null;
       foreach (var arg in commandLineArgs) {
-        var flag = arg.Trim().ToLower().Replace(" ", "");
+        var clean = arg.Trim().Replace(" ", "");
+        var flag = clean.ToLower();
         var value = !flag.EndsWith("=false");
         if (flag.StartsWith(TEST_FLAG)) {
           shouldRunTests = true;
           if (flag.StartsWith(TEST_FLAG + "=")) {
-            testPatternToRun = flag[(TEST_FLAG.Length + 1)..];
+            testPatternToRun = clean[(TEST_FLAG.Length + 1)..];
           }
         }
         else if (flag.StartsWith(QUIT_ON_FINISH_FLAG)) {
