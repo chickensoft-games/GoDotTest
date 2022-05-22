@@ -47,10 +47,12 @@ namespace GoDotTest {
         ? provider.GetTestSuites()
         : provider.GetTestSuiteByPattern(pattern);
       var reporter = new TestReporter(log);
+      var methodExecutor = new TestMethodExecutor();
       var runner = new TestExecutor(
-        env.StopOnError,
-        env.Sequential,
-        10000
+        methodExecutor: methodExecutor,
+        stopOnError: env.StopOnError,
+        sequential: env.Sequential,
+        timeoutMilliseconds: 10000
       );
       await runner.Run(sceneRoot, suites, reporter);
       if (env.QuitOnFinish) {

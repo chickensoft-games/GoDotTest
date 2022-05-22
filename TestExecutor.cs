@@ -67,6 +67,8 @@ namespace GoDotTest {
     /// <value></value>
     public bool Sequential { get; }
 
+    private readonly ITestMethodExecutor _methodExecutor;
+
     /// <summary>
     /// Creates a new test executor.
     /// </summary>
@@ -76,10 +78,12 @@ namespace GoDotTest {
     /// <param name="timeoutMilliseconds">Timeout for each test method, if any,
     /// in milliseconds.</param>
     public TestExecutor(
+      ITestMethodExecutor methodExecutor,
       bool stopOnError,
       bool sequential,
       int timeoutMilliseconds = 0
     ) {
+      _methodExecutor = methodExecutor;
       StopOnError = stopOnError;
       Sequential = sequential;
       TimeoutMilliseconds = timeoutMilliseconds;
@@ -103,7 +107,9 @@ namespace GoDotTest {
         }
       }
       catch (StoppedException) {
-        // The only exception thrown by `Run` is a StoppedOnException.
+        // The only exception thrown by `Run` is a StoppedException.
+        // We don't need to do anything here — test execution is already stopped
+        // by the time we get here.
       }
       finally {
         reporter.Update(TestEvent.Finished);
@@ -143,23 +149,29 @@ namespace GoDotTest {
       reporter.SuiteUpdate(suite, TestSuiteEvent.Started);
       foreach (var method in allMethods) {
         try {
-          if (!skip) {
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
-            await Run(method, instance);
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
+          var isCleanupMethod =
+            method.Type is TestMethodType.Cleanup or TestMethodType.CleanupAll;
+          var skipCurrentMethod = skip && !isCleanupMethod;
+          if (skipCurrentMethod) {
+            reporter.MethodUpdate(suite, method, TestMethodEvent.Skipped());
           }
           else {
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Skipped());
+            reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
+            await _methodExecutor.Run(method, instance, TimeoutMilliseconds);
+            reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
           }
         }
         catch (Exception e) {
           errorEncountered = true;
-          var innerException = e.InnerException;
-          reporter.MethodUpdate(suite, method, TestMethodEvent.Failed(innerException ?? e));
-          if (StopOnError) {
-            throw new StoppedException(innerException ?? e);
-          }
+          var exception = e.InnerException ?? e;
+          reporter.MethodUpdate(
+            suite, method, TestMethodEvent.Failed(exception)
+          );
           if (Sequential || suite.Sequential) { skip = true; }
+          Console.WriteLine($"Sequential {Sequential}, suite.Sequential {suite.Sequential}");
+          if (StopOnError) {
+            throw new StoppedException(exception);
+          }
         }
       }
       reporter.SuiteUpdate(
@@ -168,23 +180,6 @@ namespace GoDotTest {
           ? TestSuiteEvent.ErrorEncountered
           : TestSuiteEvent.Finished
         );
-    }
-
-    /// <summary>
-    /// Runs a single test method.
-    /// </summary>
-    /// <param name="method">The test method to run.</param>
-    /// <param name="instance">An instance of the test method's test
-    /// suite.</param>
-    /// <returns>An asynchronous task that completes when the method has
-    /// finished running.</returns>
-    protected async Task Run(ITestMethod method, TestClass instance) {
-      if (TimeoutMilliseconds is 0) {
-        await method.Invoke(instance);
-      }
-      else {
-        await method.Invoke(instance, TimeoutMilliseconds);
-      }
     }
   }
 }

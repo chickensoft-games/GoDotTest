@@ -45,23 +45,34 @@ namespace GoDotTest {
   }
 
   /// <summary>
-  /// Default <see cref="ITestEnvironment"/> implementation used by the test
-  /// system.
+  /// Default test environment used by the test runner system.
   /// </summary>
-  public class TestEnvironment : ITestEnvironment {
-    /// <inheritdoc/>
-    public string[] CommandLineArgs { get; }
-    /// <inheritdoc/>
-    public bool ShouldRunTests { get; }
-    /// <inheritdoc/>
-    public bool QuitOnFinish { get; }
-    /// <inheritdoc/>
-    public bool StopOnError { get; }
-    /// <inheritdoc/>
-    public bool Sequential { get; }
-    /// <inheritdoc/>
-    public string? TestPatternToRun { get; }
-
+  /// <param name="ShouldRunTests">
+  /// <inheritdoc cref="ITestEnvironment.ShouldRunTests" path="/summary"/>
+  /// </param>
+  /// <param name="QuitOnFinish">
+  /// <inheritdoc cref="ITestEnvironment.QuitOnFinish" path="/summary"/>
+  /// </param>
+  /// <param name="StopOnError">
+  /// <inheritdoc cref="ITestEnvironment.StopOnError" path="/summary"/>
+  /// </param>
+  /// <param name="Sequential">
+  /// <inheritdoc cref="ITestEnvironment.Sequential" path="/summary"/>
+  /// </param>
+  /// <param name="TestPatternToRun">
+  /// <inheritdoc cref="ITestEnvironment.TestPatternToRun" path="/summary"/>
+  /// </param>
+  /// <param name="CommandLineArgs">
+  /// <inheritdoc cref="ITestEnvironment.CommandLineArgs" path="/summary"/>
+  /// </param>
+  public record TestEnvironment(
+    bool ShouldRunTests,
+    bool QuitOnFinish,
+    bool StopOnError,
+    bool Sequential,
+    string? TestPatternToRun,
+    string[] CommandLineArgs
+  ) : ITestEnvironment {
     /// <summary>Flag which indicates tests should be run.</summary>
     public const string TEST_FLAG = "--run-tests";
     /// <summary>Flag which indicates the program should exit on finish.
@@ -79,25 +90,6 @@ namespace GoDotTest {
     public const bool DEFAULT_STOP_ON_ERROR = false;
     /// <summary>Default value sequential.</summary>
     public const bool DEFAULT_SEQUENTIAL = false;
-
-    /// <summary>
-    /// Creates a new test environment with the specified configuration
-    /// settings.
-    /// </summary>
-    public TestEnvironment(
-      bool shouldRunTests,
-      bool quitOnFinish,
-      bool stopOnError,
-      bool sequential,
-      string? testPatternToRun
-    ) {
-      ShouldRunTests = shouldRunTests;
-      QuitOnFinish = quitOnFinish;
-      StopOnError = stopOnError;
-      Sequential = sequential;
-      TestPatternToRun = testPatternToRun;
-      CommandLineArgs = new string[] { };
-    }
 
     /// <summary>
     /// Creates a new test environment from the specified command line
@@ -132,7 +124,12 @@ namespace GoDotTest {
         }
       }
       return new TestEnvironment(
-        shouldRunTests, quitOnFinish, stopOnError, sequential, testPatternToRun
+        ShouldRunTests: shouldRunTests,
+        QuitOnFinish: quitOnFinish,
+        StopOnError: stopOnError,
+        Sequential: sequential,
+        TestPatternToRun: testPatternToRun,
+        CommandLineArgs: commandLineArgs
       );
     }
   }
