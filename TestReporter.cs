@@ -114,7 +114,8 @@ namespace GoDotTest {
       }
       else if (testEvent is TestEvent.Finished) {
         var smiley = HadError ? ":(" : ":D";
-        _log.Print(Prefix(GOOD) + $"Finished testing! {smiley}");
+        var status = HadError ? BAD : GOOD;
+        _log.Print(Prefix(status) + $"Finished testing! {smiley}");
       }
     }
 
@@ -154,7 +155,7 @@ namespace GoDotTest {
     /// <param name="status">Test method status.</param>
     /// <returns>A nicely formatted log prefix string.</returns>
     protected string Prefix(ITestSuite suite, ITestMethod method, string status)
-      => $"${status} {suite.Name}::{method.Name} [{method.Type}] > ";
+      => $"{status} {suite.Name}::{method.Name} [{method.Type}] > ";
 
     /// <summary>
     /// Create a log prefix for the given test suite suite.
@@ -163,13 +164,13 @@ namespace GoDotTest {
     /// <param name="status">Test suite status.</param>
     /// <returns>A nicely formatted log prefix string.</returns>
     protected string Prefix(ITestSuite suite, string status)
-      => $"${status} {suite.Name} > ";
+      => $"{status} {suite.Name} > ";
 
     /// <summary>
     /// Create a log prefix based on the given status.
     /// </summary>
     /// <param name="status">Test status.</param>
     /// <returns>A nicely formatted log prefix string.</returns>
-    protected string Prefix(string status) => $"${status} > ";
+    protected string Prefix(string status) => $"{status} > ";
   }
 }
