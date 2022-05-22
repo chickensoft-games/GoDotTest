@@ -45,7 +45,7 @@ namespace GoDotTest {
       var pattern = env.TestPatternToRun;
       var suites = (pattern == null)
         ? provider.GetTestSuites()
-        : provider.GetTestSuiteByPattern(pattern);
+        : provider.GetTestSuitesByPattern(pattern);
       var reporter = new TestReporter(log);
       var methodExecutor = new TestMethodExecutor();
       var runner = new TestExecutor(

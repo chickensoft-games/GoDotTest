@@ -34,7 +34,7 @@ namespace GoDotTest {
     /// </summary>
     /// <param name="nameGlob">Name glob pattern to match.</param>
     /// <returns>A list of matching test suites.</returns>
-    List<ITestSuite> GetTestSuiteByPattern(string nameGlob);
+    List<ITestSuite> GetTestSuitesByPattern(string nameGlob);
   }
 
   /// <summary>
@@ -69,7 +69,7 @@ namespace GoDotTest {
       GetTestSuites().FirstOrDefault(suite => suite.Name == name);
 
     /// <inheritdoc/>
-    public List<ITestSuite> GetTestSuiteByPattern(string nameGlob) =>
+    public List<ITestSuite> GetTestSuitesByPattern(string nameGlob) =>
       GetTestSuites().Where(
         suite => MatchesGlob(suite.Name, nameGlob)
       ).ToList();
