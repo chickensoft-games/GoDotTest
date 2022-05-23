@@ -138,7 +138,9 @@ namespace GoDotTest {
       var completedTask = await Task.WhenAny(
         task,
         Task.Delay(
-          timeoutMilliseconds, timeoutCancellationTokenSource.Token
+          // Prefer the timeout duration specified by the test method, if any.
+          TimeoutMilliseconds ?? timeoutMilliseconds,
+          timeoutCancellationTokenSource.Token
         )
       );
       if (completedTask == task) {

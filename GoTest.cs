@@ -1,4 +1,5 @@
 namespace GoDotTest {
+  using System;
   using System.Threading.Tasks;
   using Godot;
   using GoDotNet;
@@ -24,6 +25,22 @@ namespace GoDotTest {
   /// </summary>
   public class GoTest {
     /// <summary>
+    /// The default test adapter used to construct test system objects.
+    /// </summary>
+    public static readonly ITestAdapter DefaultAdapter = new TestAdapter();
+    /// <summary>
+    /// Test adapter to use when constructing objects needed for testing.
+    /// A useless abstraction, but allows for better unit testing of the test
+    /// system itself.
+    /// </summary>
+    public static ITestAdapter Adapter { get; set; } = DefaultAdapter;
+
+    public static Action<Node, int> DefaultOnExit
+      = (node, exitCode) => node.GetTree().Quit(exitCode);
+
+    public static Action<Node, int> OnExit { get; set; } = DefaultOnExit;
+
+    /// <summary>
     /// Runs tests indicated to be run by the test environment. If the test
     /// environment does not indicate that tests should be run, nothing will
     /// happen.
@@ -41,23 +58,23 @@ namespace GoDotTest {
       Node sceneRoot, ITestEnvironment env, ILog log
     ) {
       if (!env.ShouldRunTests) { return; }
-      var provider = new TestProvider();
+      var provider = Adapter.CreateProvider();
       var pattern = env.TestPatternToRun;
       var suites = (pattern == null)
         ? provider.GetTestSuites()
         : provider.GetTestSuitesByPattern(pattern);
-      var reporter = new TestReporter(log);
-      var methodExecutor = new TestMethodExecutor();
-      var runner = new TestExecutor(
+      var reporter = Adapter.CreateReporter(log);
+      var methodExecutor = Adapter.CreateMethodExecutor();
+      var executor = Adapter.CreateExecutor(
         methodExecutor: methodExecutor,
         stopOnError: env.StopOnError,
         sequential: env.Sequential,
         timeoutMilliseconds: 10000
       );
-      await runner.Run(sceneRoot, suites, reporter);
+      await executor.Run(sceneRoot, suites, reporter);
       if (env.QuitOnFinish) {
         var exitCode = reporter.HadError ? 1 : 0;
-        sceneRoot.GetTree().Quit(exitCode);
+        OnExit(sceneRoot, exitCode);
       }
     }
   }

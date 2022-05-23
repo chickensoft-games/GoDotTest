@@ -7,6 +7,8 @@ namespace GoDotTest {
   /// Class which stores results for each test suite method.
   /// </summary>
   public interface ITestReporter {
+    /// <summary>True if an error was encountered in any test suite.</summary>
+    bool HadError { get; }
     /// <summary>
     /// Called when an event concerning a test suite method has occurred.
     /// </summary>
@@ -56,7 +58,7 @@ namespace GoDotTest {
       ITestSuite, Map<ITestMethod, Exception>
     > _failures { get; } = new();
 
-    /// <summary>True if an error was encountered in any test suite.</summary>
+    /// <inheritdoc/>
     public bool HadError => _failures.Count > 0;
 
     /// <summary>Log used to output test results.</summary>
