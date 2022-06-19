@@ -28,7 +28,6 @@ Here's a simple test which does absolutely nothing. It can use the `TestScene` n
 
 ```csharp
 using Godot;
-using GoDotNet;
 using GoDotTest;
 
 public class ExampleTest : TestClass {
