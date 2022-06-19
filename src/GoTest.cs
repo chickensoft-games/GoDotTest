@@ -1,8 +1,9 @@
 namespace GoDotTest {
   using System;
+  using System.Reflection;
   using System.Threading.Tasks;
   using Godot;
-  using GoDotNet;
+  using GoDotLog;
 
   /// <summary>
   /// GoDotTest is a simple, opinionated test runner for Godot. It finds test
@@ -35,9 +36,11 @@ namespace GoDotTest {
     /// </summary>
     public static ITestAdapter Adapter { get; set; } = DefaultAdapter;
 
+    /// <summary>Default action to perform for exiting.</summary>
     public static Action<Node, int> DefaultOnExit
       = (node, exitCode) => node.GetTree().Quit(exitCode);
 
+    /// <summary>Action to perform for exiting.</summary>
     public static Action<Node, int> OnExit { get; set; } = DefaultOnExit;
 
     /// <summary>
@@ -60,9 +63,10 @@ namespace GoDotTest {
       if (!env.ShouldRunTests) { return; }
       var provider = Adapter.CreateProvider();
       var pattern = env.TestPatternToRun;
+      var assembly = Assembly.GetCallingAssembly();
       var suites = (pattern == null)
-        ? provider.GetTestSuites()
-        : provider.GetTestSuitesByPattern(pattern);
+        ? provider.GetTestSuites(assembly)
+        : provider.GetTestSuitesByPattern(assembly, pattern);
       var reporter = Adapter.CreateReporter(log);
       var methodExecutor = Adapter.CreateMethodExecutor();
       var executor = Adapter.CreateExecutor(

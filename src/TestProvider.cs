@@ -18,23 +18,25 @@ namespace GoDotTest {
     /// <see cref="TestAttribute"/>, <see cref="SetupAttribute"/>, etc.
     /// </summary>
     /// <returns>List of test suites.</returns>
-    List<ITestSuite> GetTestSuites();
+    List<ITestSuite> GetTestSuites(Assembly assembly);
     /// <summary>
     /// Searches through each <see cref="TestSuite"/> in the assembly for
     /// the first test suite type that matches the specified name exactly.
     /// </summary>
+    /// <param name="assembly"></param>
     /// <param name="name">Test Suite type name.</param>
     /// <returns>The first test suite with an exact name match, if any.
     /// </returns>
-    ITestSuite? GetTestSuiteByName(string name);
+    ITestSuite? GetTestSuiteByName(Assembly assembly, string name);
     /// <summary>
     /// Searches through each <see cref="TestSuite"/> in the assembly for
     /// each test suite type that matches the specified name glob (not case
     /// sensitive).
     /// </summary>
+    /// <param name="assembly"></param>
     /// <param name="nameGlob">Name glob pattern to match.</param>
     /// <returns>A list of matching test suites.</returns>
-    List<ITestSuite> GetTestSuitesByPattern(string nameGlob);
+    List<ITestSuite> GetTestSuitesByPattern(Assembly assembly, string nameGlob);
   }
 
   /// <summary>
@@ -56,8 +58,7 @@ namespace GoDotTest {
       };
 
     /// <inheritdoc/>
-    public List<ITestSuite> GetTestSuites() {
-      var assembly = Assembly.GetExecutingAssembly();
+    public List<ITestSuite> GetTestSuites(Assembly assembly) {
       var suites = assembly.GetTypes().Where(type =>
         type.IsSubclassOf(typeof(TestClass)) && !type.IsAbstract && type.IsClass
       ).Select(type => GetTestSuite(type)).ToList();
@@ -65,14 +66,15 @@ namespace GoDotTest {
     }
 
     /// <inheritdoc/>
-    public ITestSuite? GetTestSuiteByName(string name) =>
-      GetTestSuites().FirstOrDefault(suite => suite.Name == name);
+    public ITestSuite? GetTestSuiteByName(Assembly assembly, string name) =>
+      GetTestSuites(assembly).FirstOrDefault(suite => suite.Name == name);
 
     /// <inheritdoc/>
-    public List<ITestSuite> GetTestSuitesByPattern(string nameGlob) =>
-      GetTestSuites().Where(
-        suite => MatchesGlob(suite.Name, nameGlob)
-      ).ToList();
+    public List<ITestSuite> GetTestSuitesByPattern(
+      Assembly assembly, string nameGlob
+    ) => GetTestSuites(assembly).Where(
+      suite => MatchesGlob(suite.Name, nameGlob)
+    ).ToList();
 
     /// <summary>
     /// Fetches a test suite from the given type.

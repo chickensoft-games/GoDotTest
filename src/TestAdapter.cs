@@ -1,5 +1,5 @@
 namespace GoDotTest {
-  using GoDotNet;
+  using GoDotLog;
 
   /// <summary>
   /// Represents an object which constructs classes needed for testing.

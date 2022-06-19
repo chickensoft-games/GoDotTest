@@ -72,6 +72,7 @@ namespace GoDotTest {
     /// <summary>
     /// Creates a new test executor.
     /// </summary>
+    /// <param name="methodExecutor">Test method executor.</param>
     /// <param name="stopOnError">True if the executor should stop at the first
     /// exception encountered.</param>
     /// <param name="sequential"></param>

@@ -1,7 +1,8 @@
 namespace GoDotTest {
   using System;
   using System.Collections.Generic;
-  using GoDotNet;
+  using GoDotCollections;
+  using GoDotLog;
 
   /// <summary>
   /// Class which stores results for each test suite method.
