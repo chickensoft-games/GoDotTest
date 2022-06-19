@@ -20,8 +20,6 @@ You can use GoDotTest with C# 10 and Godot to run, debug, and collect code cover
 
 For C# 10 to work, you need the dotnet 6 SDK installed. See what you have installed with `dotnet --info`. On mac, Godot 3 can have trouble finding .NET 6 if you have older SDK's installed, due to the dotnet [path search order][godot-dotnet-paths]. There are also a few [work-arounds][dotnet-path-workaround] available.
 
-This project uses git submodules to bring in the code for the Godot addons, since some of the addons are still in development. Be sure to run `git submodule update --init --recursive` once you've cloned the repo to pull in all the addon code.
-
 ## Example Test
 
 Here's a simple test which does absolutely nothing. It can use the `TestScene` node available to it from its base class to manipulate the scene tree, if needed.
@@ -303,7 +301,7 @@ Additionally, any methods tagged with the `[SetupAll]` or `[CleanupAll]` attribu
 
 GoDotTest will `await` any `async Task` test methods it encounters. Tests do not run in parallel, nor are there any plans to add that functionality. The focus of GoDotTest is to provide a simple, C#-first approach to testing in Godot that runs tests in a very simple and deterministic manner.
 
-If you need to customize how tests are loaded and run, you can use the code in `addons/go_dot_test/GoTest.cs` as a starting point.
+If you need to customize how tests are loaded and run, you can use the code in [`GoTest.cs`](src/GoTest.cs) as a starting point.
 
 ### Command Line Arguments
 
@@ -312,7 +310,7 @@ If you need to customize how tests are loaded and run, you can use the code in `
 - `--stop-on-error`: The presence of this flag indicates that the test runner should stop running tests when it encounters the first error in any test suite. Without this flag, it will attempt to run all of the test suites.
 - `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`. 
 
-For more information about command line flags, see `addons/go_dot_test/TestEnvironment.cs`.
+For more information about command line flags, see [`TestEnvironment.cs`](src/TestEnvironment.cs).
 
 <!-- Links -->
 
