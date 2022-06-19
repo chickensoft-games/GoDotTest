@@ -267,7 +267,7 @@ dotnet tool install --global coverlet.console
 dotnet tool update --global coverlet.console
 ```
 
-To run Godot with code coverage enabled, use a script like the following (or reference the local [`coverage.sh`](go_dot_test_tests/coverage.sh).
+To run Godot with code coverage enabled, use a script like the following (or reference the local [`coverage.sh`](test/coverage.sh).
 
 ```sh
 coverlet .mono/temp/bin/Debug/ --target $GODOT --targetargs \
