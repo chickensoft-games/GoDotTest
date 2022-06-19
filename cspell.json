@@ -1,12 +1,16 @@
 {
   "words": [
+    "arounds",
     "branchcoverage",
+    "Chickensoft",
     "Cmdline",
     "cref",
+    "globaltool",
     "inheritdoc",
     "lcov",
     "linecoverage",
     "nameof",
+    "OPTOUT",
     "reportgenerator",
     "reporttypes",
     "Shouldly",

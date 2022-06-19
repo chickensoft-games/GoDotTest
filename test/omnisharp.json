@@ -1,9 +1,4 @@
 {
-  "fileOptions": {
-    "excludeSearchPatterns": [
-      "**/test/**/*.cs"
-    ]
-  },
   "FormattingOptions": {
     "EnableEditorConfigSupport": true
   },
