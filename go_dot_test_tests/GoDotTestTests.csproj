@@ -1,0 +1,31 @@
+<Project Sdk="Godot.NET.Sdk/3.3.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <!-- As if coding wasn't difficult enough, let's enable hard mode: -->
+    <Nullable>enable</Nullable>
+    <!-- x64 restriction required for Steam and certain other things -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Required for some nuget packages to work -->
+    <!-- See https://www.reddit.com/r/godot/comments/l0naqg/comment/gjwfspm/ -->
+    <!-- And https://github.com/godotengine/godot/issues/42271#issuecomment-751423827 -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chickensoft.GoDotLog" Version="0.0.4" />
+    <PackageReference Include="Chickensoft.GoDotCollections" Version="0.0.2" />
+    <!-- Bring your own assertion library for tests! -->
+    <!-- We're using Shouldy for this example, but you can use anything. -->
+    <PackageReference Include="Shouldly" Version="4.0.3" />
+    <!-- Bring your own mocking library for tests! -->
+    <!-- We're using Moq for this example, but you can use anything. -->
+    <PackageReference Include="Moq" Version="4.17.2" />
+
+    <!-- Include GoDotTest files directly for the sake of coverage -->
+    <!-- https://stackoverflow.com/a/35477501 -->
+    <Compile Include="..\src\**\*.cs">
+      <Link>go_dot_test</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

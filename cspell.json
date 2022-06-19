@@ -1,6 +1,17 @@
 {
   "words": [
+    "branchcoverage",
+    "Cmdline",
     "cref",
-    "inheritdoc"
+    "inheritdoc",
+    "lcov",
+    "linecoverage",
+    "nameof",
+    "reportgenerator",
+    "reporttypes",
+    "Shouldly",
+    "targetargs",
+    "targetdir",
+    "tscn"
   ]
 }
