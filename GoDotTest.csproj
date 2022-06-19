@@ -27,7 +27,7 @@
     <RepositoryUrl>https://github.com/chickensoft-games/go_dot_test</RepositoryUrl>
 
     <!-- Don't include the test project which tests the test system itself. -->
-    <DefaultItemExcludes>$(DefaultItemExcludes);go_dot_test_tests/**/*</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);test/**/*</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -255,6 +255,41 @@ limits/debugger_stdout/max_warnings_per_second=500
 
 GoDotTest doesn't provide any assertions or mocking. It's simply a test provider and test running system. Eventually, GoDotTest will include a few asynchronous utilities to make integration testing scenes easier, allowing you to simulate frames, input, etc, but there are no plans to ever provide an assertion or mocking system — you can use whatever you like!
 
+### Coverage
+
+If your code is configured correctly to switch to the test scene when `--run-tests` is passed in (see above), you can run all of your tests and generate code coverage while Godot is running.
+
+![test coverage](doc_assets/test_coverage.png)
+
+First, install [coverlet] and [reportgenerator].
+
+```sh
+dotnet tool install --global dotnet-reportgenerator-globaltool
+dotnet tool install --global coverlet.console
+# Do this too if you're on an M1 mac / ARMx64 system:
+# Works around https://github.com/dotnet/efcore/issues/27787#issuecomment-1110061226
+dotnet tool update --global coverlet.console
+```
+
+To run Godot with code coverage enabled, use a script like the following (or reference the local [`coverage.sh`](go_dot_test_tests/coverage.sh).
+
+```sh
+coverlet .mono/temp/bin/Debug/ --target $GODOT --targetargs \
+  "--run-tests --quit-on-finish" --format "lcov" \
+  --output ./coverage/coverage.info \
+  --exclude-by-file "**/test/**/*.cs" # Don't collect coverage for the tests
+
+reportgenerator \
+  -reports:"./coverage/coverage.info" \
+  -targetdir:"./coverage/report" \
+  -reporttypes:Html
+
+# Open the coverage report in your browser.
+open coverage/report/index.html
+```
+
+**Note:** On macOS, you may need to run `chmod +x ./coverage.sh` to add execution permissions before you are able to run the `coverage.sh` script.
+
 ## How It Works
 
 GoDotTest uses C# Reflection to find all classes in the current assembly that extend the `TestClass` it provides. It uses a `TestProvider` to find and load test suites (classes that extend `TestClass`) that can be run. It references a `TestEnvironment` that is created from the command line arguments given to the game/Godot and filters the test suites based on the presence of a test suite name, if given.
@@ -283,12 +318,13 @@ For more information about command line flags, see `addons/go_dot_test/TestEnvir
 
 <!-- Links -->
 
-[line-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTestExample/main/reports/line_coverage.svg
-[branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTestExample/main/reports/branch_coverage.svg
+[line-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTest/main/go_dot_test_tests/reports/line_coverage.svg
+[branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTest/main/go_dot_test_tests/reports/branch_coverage.svg
 [GoDotTest]: https://www.nuget.org/packages/Chickensoft.GoDotTest/
 [dotnet-path-workaround]: https://github.com/godotengine/godot-proposals/issues/1941#issuecomment-1118648965
 [godot-dotnet-paths]: https://github.com/godotengine/godot/blob/ade4e9320a6ca403b8053fe5828d3f9ce809338c/modules/mono/editor/GodotTools/GodotTools/Build/MsBuildFinder.cs#L122-L130
 [coverlet]: https://github.com/coverlet-coverage/coverlet
+[reportgenerator]: https://github.com/danielpalme/ReportGenerator
 [lcov]: https://github.com/linux-test-project/lcov
 [Shouldly]: https://github.com/shouldly/shouldly
 [Moq]: https://github.com/moq/moq4

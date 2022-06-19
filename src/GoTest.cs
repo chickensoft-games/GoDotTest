@@ -51,6 +51,7 @@ namespace GoDotTest {
     /// Tests are run in the specified scene root node, allowing them to attach
     /// other nodes and scenes as needed.
     /// </summary>
+    /// <param name="assembly">Assembly to load test files from.</param>
     /// <param name="sceneRoot">Scene root node hosting the tests.</param>
     /// <param name="env">The test environment containing test configuration
     /// settings.</param>
