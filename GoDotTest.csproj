@@ -15,8 +15,8 @@
     <Company>Chickensoft</Company>
 
     <PackageId>Chickensoft.GoDotTest</PackageId>
-    <PackageVersion>0.0.2</PackageVersion>
-    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <PackageVersion>0.0.3</PackageVersion>
+    <PackageReleaseNotes>GoDotTest release.</PackageReleaseNotes>
     <PackageIcon></PackageIcon>
     <PackageTags>Godot;Test;Testing;Runner;Chickensoft;Gamedev;Utility;Utilities</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -59,8 +59,13 @@ namespace GoDotTest {
     /// <returns>An asynchronous task that completes when the tests have
     /// finished running.</returns>
     public static async Task RunTests(
-      Assembly assembly, Node sceneRoot, ITestEnvironment env, ILog log
+      Assembly assembly,
+      Node sceneRoot,
+      ITestEnvironment? env = null,
+      ILog? log = null
     ) {
+      env = Adapter.CreateTestEnvironment(env);
+      log = Adapter.CreateLog(log);
       if (!env.ShouldRunTests) { return; }
       var provider = Adapter.CreateProvider();
       var pattern = env.TestPatternToRun;

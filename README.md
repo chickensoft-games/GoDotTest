@@ -200,15 +200,13 @@ The following `launch.json` file provides launch configurations to debug the gam
 Create a `test` folder in your project and create a test scene in it. Add a C# script to the root of the test scene with the following contents:
 
 ```csharp
+using System.Reflection;
 using Godot;
-using GoDotNet;
 using GoDotTest;
 
 public class Tests : Node2D {
-  public override async void _Ready() => await GoTest.RunTests(
-    Assembly.GetExecutingAssembly(),
-    this, TestEnvironment.From(OS.GetCmdlineArgs()), new GDLog(nameof(Tests))
-  );
+  public override async void _Ready()
+    => await GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
 }
 ```
 

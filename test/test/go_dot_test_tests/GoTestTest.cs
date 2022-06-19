@@ -62,6 +62,9 @@ public class GoTestTest : TestClass {
     ).Returns(Task.CompletedTask);
 
     var adapter = new Mock<ITestAdapter>();
+    adapter.Setup(adapter => adapter.CreateTestEnvironment(testEnv))
+      .Returns(testEnv);
+    adapter.Setup(adapter => adapter.CreateLog(log.Object)).Returns(log.Object);
     adapter.Setup(
       adapter => adapter.CreateProvider()
     ).Returns(provider.Object);

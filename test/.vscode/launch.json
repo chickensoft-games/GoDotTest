@@ -1,0 +1,83 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Play in Editor",
+      "type": "godot-mono",
+      "mode": "playInEditor",
+      "request": "launch"
+    },
+    // We tell the game to run tests by using command line arguments.
+    // This means we can't use the "play in editor" option — we have to launch
+    // our own instance of Godot.
+    //
+    // Since passing scene files to Godot doesn't seem to work easily with the
+    // C# Tools for Godot VSCode plugin, we use the path to Godot from the
+    // environment. Make sure you set the GODOT variable to your Godot
+    // executable.
+    //
+    // On mac, you can add the following to your zsh rc file:
+    // alias godot="/Applications/Godot.app/Contents/MacOS/Godot"
+    {
+      "name": "Debug Tests",
+      "type": "godot-mono",
+      "mode": "executable",
+      "request": "launch",
+      "executable": "${env:GODOT}",
+      "executableArguments": [
+        "--run-tests",
+        "--quit-on-finish"
+      ],
+      "preLaunchTask": "build"
+    },
+    // Debug the current test!
+    //
+    // The test runner will look for the class with the same name as the test
+    // file that's currently open (disregarding its folder and file extension).
+    // The search is case-insensitive.
+    {
+      "name": "Debug Current Test",
+      "type": "godot-mono",
+      "mode": "executable",
+      "request": "launch",
+      "executable": "${env:GODOT}",
+      "executableArguments": [
+        "--run-tests=${fileBasenameNoExtension}",
+        "--quit-on-finish"
+      ],
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "Launch",
+      "type": "godot-mono",
+      "request": "launch",
+      "mode": "executable",
+      "preLaunchTask": "build",
+      "executable": "/Applications/Godot.app/Contents/MacOS/Godot",
+      "executableArguments": [
+        "--path",
+        "${workspaceRoot}"
+      ]
+    },
+    {
+      "name": "Launch (Select Scene)",
+      "type": "godot-mono",
+      "request": "launch",
+      "mode": "executable",
+      "preLaunchTask": "build",
+      "executable": "/Applications/Godot.app/Contents/MacOS/Godot",
+      "executableArguments": [
+        "--path",
+        "${workspaceRoot}",
+        "${command:SelectLaunchScene}"
+      ]
+    },
+    {
+      "name": "Attach",
+      "type": "godot-mono",
+      "request": "attach",
+      "address": "localhost",
+      "port": 23685
+    }
+  ]
+}
