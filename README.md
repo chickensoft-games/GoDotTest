@@ -318,8 +318,8 @@ For more information about command line flags, see `addons/go_dot_test/TestEnvir
 
 <!-- Links -->
 
-[line-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTest/main/go_dot_test_tests/reports/line_coverage.svg
-[branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/GoDotTest/main/go_dot_test_tests/reports/branch_coverage.svg
+[line-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/line_coverage.svg
+[branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/branch_coverage.svg
 [GoDotTest]: https://www.nuget.org/packages/Chickensoft.GoDotTest/
 [dotnet-path-workaround]: https://github.com/godotengine/godot-proposals/issues/1941#issuecomment-1118648965
 [godot-dotnet-paths]: https://github.com/godotengine/godot/blob/ade4e9320a6ca403b8053fe5828d3f9ce809338c/modules/mono/editor/GodotTools/GodotTools/Build/MsBuildFinder.cs#L122-L130
