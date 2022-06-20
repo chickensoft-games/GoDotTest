@@ -33,7 +33,7 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <PackageReference Include="Chickensoft.GoDotLog" Version="0.0.4" />
-    <PackageReference Include="Chickensoft.GoDotCollections" Version="0.0.2" />
+    <PackageReference Include="Chickensoft.GoDotCollections" Version="0.0.3" />
     <!-- Required for inheritdoc -->
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>

@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Chickensoft.GoDotLog" Version="0.0.4" />
-    <PackageReference Include="Chickensoft.GoDotCollections" Version="0.0.2" />
+    <PackageReference Include="Chickensoft.GoDotCollections" Version="0.0.3" />
     <!-- Bring your own assertion library for tests! -->
     <!-- We're using Shouldy for this example, but you can use anything. -->
     <PackageReference Include="Shouldly" Version="4.0.3" />
