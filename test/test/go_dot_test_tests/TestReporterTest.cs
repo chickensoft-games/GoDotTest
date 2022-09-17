@@ -173,7 +173,7 @@ public class TestReporterTest : TestClass {
     var log = new Mock<ILog>(MockBehavior.Strict);
     var reporter = new TestReporter(log.Object);
 
-    log.Setup(log => log.Print("> ^^ >> > Started testing! :3"));
+    log.Setup(log => log.Print("> ^^ >> Started testing! :3"));
     reporter.Update(TestEvent.Started);
     log.VerifyAll();
   }
@@ -183,7 +183,7 @@ public class TestReporterTest : TestClass {
     var log = new Mock<ILog>(MockBehavior.Strict);
     var reporter = new TestReporter(log.Object);
 
-    log.Setup(log => log.Print("> OK >> > Finished testing! :D"));
+    log.Setup(log => log.Print("> OK >> Finished testing! :D"));
     reporter.Update(TestEvent.Finished);
     log.VerifyAll();
   }
@@ -195,13 +195,16 @@ public class TestReporterTest : TestClass {
     log.Setup(
       log => log.Print("> !! >> TestSuite::Method [Test] > Test failed! :(")
     );
-    log.Setup(log => log.Print("> !! >> > Finished testing! :("));
+    log.Setup(log => log.Print("> !! >> Finished testing! :("));
     log.Setup(
       log => log.Print(
         "> !! >> TestSuite::Method [Test] > Error occurred: " +
         "TestReporterException"
       )
     );
+    log.Setup(log => log.Print(
+      "> !! >> Test results: Passed: 0 | Failed: 1 | Skipped: 0"
+    ));
     var exception = new TestReporterException();
     log.Setup(log => log.Print(exception));
     var suite = CreateSuite();
@@ -210,6 +213,29 @@ public class TestReporterTest : TestClass {
       suite.Object,
       method.Object,
       TestMethodEvent.Failed(exception)
+    );
+    reporter.Update(TestEvent.Finished);
+    reporter.OutputFinalReport();
+    log.VerifyAll();
+  }
+
+  [Test]
+  public void OutputsFinalSuccessfulReport() {
+    var log = new Mock<ILog>(MockBehavior.Strict);
+    var reporter = new TestReporter(log.Object);
+    log.Setup(
+      log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")
+    );
+    log.Setup(log => log.Print("> OK >> Finished testing! :D"));
+    log.Setup(log => log.Print(
+      "> OK >> Test results: Passed: 1 | Failed: 0 | Skipped: 0"
+    ));
+    var suite = CreateSuite();
+    var method = CreateMethod(TestMethodType.Test);
+    reporter.MethodUpdate(
+      suite.Object,
+      method.Object,
+      TestMethodEvent.Passed()
     );
     reporter.Update(TestEvent.Finished);
     reporter.OutputFinalReport();

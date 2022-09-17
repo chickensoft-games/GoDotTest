@@ -20,7 +20,7 @@ You can use GoDotTest with C# 10 and Godot to run, debug, and collect code cover
 
 For C# 10 to work, you need the dotnet 6 SDK installed. See what you have installed with `dotnet --info`. On mac, Godot 3 can have trouble finding .NET 6 if you have older SDK's installed, due to the dotnet [path search order][godot-dotnet-paths]. There are also a few [work-arounds][dotnet-path-workaround] available.
 
-## Example Test
+## Examples
 
 Here's a simple test which does absolutely nothing. It can use the `TestScene` node available to it from its base class to manipulate the scene tree, if needed.
 
@@ -50,7 +50,7 @@ public class ExampleTest : TestClass {
 }
 ```
 
-Here's the output of the test above:
+Below is the test execution output GoDoTest shows for its own tests: 
 
 ![test output](doc_assets/test_output.png)
 
@@ -58,7 +58,7 @@ Here's the output of the test above:
 
 You can debug tests in Godot from Visual Studio Code. To do this, you will need to specify the `GODOT` environment variable for the following launch configurations and scripts to work correctly. The `GODOT` variable should point to the path of the Godot executable.
 
-You will need to include something like this in your `.zshrc` or `.bash_profile` file.
+You will need to specify the `GODOT` environment variable in your `.zshrc` or `.bash_profile` file (or set it up manually on Windows).
 
 ```sh
 # Dotnet
@@ -74,9 +74,11 @@ export PATH="/usr/local/share/dotnet:/usr/local/share/dotnet/sdk:$PATH"
 export GODOT="/Applications/Godot.app/Contents/MacOS/Godot"
 ```
 
-### Debugging
+## Debugging
 
 The following `launch.json` file provides launch configurations to debug the game, debug all the tests, or debug the currently open test in Visual Studio Code. To debug the currently open test, make sure the class name of the test matches the file name, as is typical in C#.
+
+### Godot 3.x Launch Configurations
 
 > You can also just copy and paste `.vscode/launch.json` and `.vscode/tasks.json` from this repository into your own project that uses GoDotTest.
 
@@ -193,7 +195,7 @@ The following `launch.json` file provides launch configurations to debug the gam
 }
 ```
 
-### Test Scene
+## Testing a Scene
 
 Create a `test` folder in your project and create a test scene in it. Add a C# script to the root of the test scene with the following contents:
 
@@ -208,7 +210,7 @@ public class Tests : Node2D {
 }
 ```
 
-### Main Scene
+## Main Scene
 
 In your main scene, you need to determine if tests should be run. GoDotTest relies on the presence of certain command line arguments to determine if tests should be run.
 
@@ -232,7 +234,7 @@ public class Main : Node2D {
 }
 ```
 
-### Logging
+## Logging
 
 Make sure you add this to your `project.godot` file so you can see test logs when they're running.
 
@@ -247,11 +249,11 @@ limits/debugger_stdout/max_errors_per_second=500
 limits/debugger_stdout/max_warnings_per_second=500
 ```
 
-### Assertions and Mocking
+## Assertions and Mocking
 
 GoDotTest doesn't provide any assertions or mocking. It's simply a test provider and test running system. Eventually, GoDotTest will include a few asynchronous utilities to make integration testing scenes easier, allowing you to simulate frames, input, etc, but there are no plans to ever provide an assertion or mocking system — you can use whatever you like!
 
-### Coverage
+## Coverage
 
 If your code is configured correctly to switch to the test scene when `--run-tests` is passed in (see above), you can run all of your tests and generate code coverage while Godot is running.
 
@@ -303,7 +305,7 @@ GoDotTest will `await` any `async Task` test methods it encounters. Tests do not
 
 If you need to customize how tests are loaded and run, you can use the code in [`GoTest.cs`](src/GoTest.cs) as a starting point.
 
-### Command Line Arguments
+## Command Line Arguments
 
 - `--run-tests`: The presence of this flag informs your game that tests should be run. If you've setup your main scene to redirect to the test scene when it finds this flag (as described above), you can use pass this flag in when running Godot from the command line (for debugging or CI/CD purposes) to run your test(s).
 - `--quit-on-finish`: The presence of this flag indicates that the test runner should exit the application as soon as it is finished running tests.
