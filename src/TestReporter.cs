@@ -1,6 +1,7 @@
 namespace GoDotTest {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using GoDotCollections;
   using GoDotLog;
 
@@ -66,6 +67,22 @@ namespace GoDotTest {
     protected ILog _log { get; }
 
     /// <summary>
+    /// The number of test methods that were skipped.
+    /// </summary>
+    public int NumSkippedMethods { get; private set; } = 0;
+
+    /// <summary>
+    /// The number of test methods which have successfully passed.
+    /// </summary>
+    public int NumPassingMethods { get; private set; } = 0;
+
+    /// <summary>
+    /// The number of test methods which have failed to pass.
+    /// </summary>
+    public int NumFailingMethods
+      => _failures.Values.Sum(failingMethods => failingMethods.Count);
+
+    /// <summary>
     /// Create a test reporter.
     /// </summary>
     /// <param name="log">Log used to output test results.</param>
@@ -83,6 +100,7 @@ namespace GoDotTest {
 
       if (testEvent is TestMethodPassedEvent) {
         _log.Print(Prefix(suite, method, GOOD) + "Test passed! :)");
+        NumPassingMethods++;
       }
       else if (testEvent is TestMethodFailedEvent failure) {
         _log.Print(Prefix(suite, method, BAD) + "Test failed! :(");
@@ -90,6 +108,7 @@ namespace GoDotTest {
       }
       else if (testEvent is TestMethodSkippedEvent) {
         _log.Print(Prefix(suite, method, BLANK) + "Test skipped! :|");
+        NumSkippedMethods++;
       }
       else if (testEvent is TestMethodStartedEvent) {
         _log.Print(Prefix(suite, method, BLANK) + "Test started! :3");
@@ -124,6 +143,10 @@ namespace GoDotTest {
 
     /// <inheritdoc/>
     public void OutputFinalReport() {
+      var numFailingMethods = _failures.Values.Sum(
+        failingMethods => failingMethods.Count
+      );
+
       if (HadError) {
         foreach (var (suite, methods) in _failures) {
           foreach (var method in methods.Keys) {
@@ -135,6 +158,14 @@ namespace GoDotTest {
           }
         }
       }
+
+      _log.Print(
+        Prefix(HadError ? BAD : GOOD) +
+        $"Test results: " +
+        $"Passed: {NumPassingMethods} | " +
+        $"Failed: {NumFailingMethods} | " +
+        $"Skipped: {NumSkippedMethods}"
+      );
     }
 
     /// <summary>
@@ -174,6 +205,6 @@ namespace GoDotTest {
     /// </summary>
     /// <param name="status">Test status.</param>
     /// <returns>A nicely formatted log prefix string.</returns>
-    protected string Prefix(string status) => $"{status} > ";
+    protected string Prefix(string status) => $"{status} ";
   }
 }
