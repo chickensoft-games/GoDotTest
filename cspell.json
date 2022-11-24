@@ -16,6 +16,7 @@
     "Shouldly",
     "targetargs",
     "targetdir",
-    "tscn"
+    "tscn",
+    "typeparam"
   ]
 }

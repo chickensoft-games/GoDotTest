@@ -62,6 +62,12 @@ indent_style = tab
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/configuration-options#scope
 ##########################################
 
+# Ignore a lack of documentation for generated code. Doesn't apply to builds,
+# just to viewing generation output.
+[*_Generated.cs]
+dotnet_diagnostic.CS1591.severity = none
+
+
 [*.{cs,csx,cake,vb,vbx}]
 # Default Severity for all .NET Code Style rules below
 dotnet_analyzer_diagnostic.severity = warning
@@ -74,6 +80,23 @@ dotnet_analyzer_diagnostic.severity = warning
 # .NET Style Rules
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#net-style-rules
 [*.{cs,csx,cake,vb,vbx}]
+
+# Don't suggest making members static.
+dotnet_diagnostic.CA1822.severity = none
+
+# Don't try to make every public static thing invisible:
+dotnet_diagnostic.CA2211.severity = none
+
+# Allow underscores in names
+dotnet_diagnostic.CA1707.severity = none
+
+# Don't require culture info for ToString() or other string methods
+dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1310.severity = none
+
+# Allow protected fields:
+dotnet_diagnostic.CA1051.severity = none
+
 # "this." and "Me." qualifiers
 dotnet_style_qualification_for_field = false
 dotnet_style_qualification_for_property = false
@@ -163,7 +186,7 @@ csharp_using_directive_placement = inside_namespace:warning
 # Modifier preferences
 csharp_prefer_static_local_function = true:warning
 # Undocumented
-csharp_style_namespace_declarations = block_scoped:warning
+csharp_style_namespace_declarations = file_scoped:warning
 
 ##########################################
 # Unnecessary Code Rules

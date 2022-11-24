@@ -1,3 +1,4 @@
+namespace GoDotTestTest;
 using Godot;
 using GoDotTest;
 

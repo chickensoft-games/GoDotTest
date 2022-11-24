@@ -1,9 +1,9 @@
+namespace GoDotTestTest;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using GoDotTest;
 using Shouldly;
-
 
 public class TestProviderTest : TestClass {
   public TestProviderTest(Node testScene) : base(testScene) { }
@@ -30,7 +30,7 @@ public class TestProviderTest : TestClass {
 
   [Test]
   public void IsAsyncRecognizesAsyncMethod() => TestProvider.IsAsync(
-    typeof(TestProviderTest).GetMethod(nameof(TestProviderTest.AsyncMethod))
+    typeof(TestProviderTest).GetMethod(nameof(TestProviderTest.AsyncMethod))!
   ).ShouldBeTrue();
 
   public async Task AsyncMethod() => await Task.CompletedTask;

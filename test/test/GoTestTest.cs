@@ -1,3 +1,4 @@
+namespace GoDotTestTest;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -5,7 +6,9 @@ using System.Threading.Tasks;
 using Godot;
 using GoDotLog;
 using GoDotTest;
-using Moq;
+using LightMock;
+using LightMock.Generator;
+using LightMoq;
 using Shouldly;
 
 public class TestTestAdapter : TestAdapter {
@@ -32,10 +35,10 @@ public class GoTestTest : TestClass {
 
   [Test]
   public async Task DoesNothingIfNotRunningTests() {
-    var adapter = new Mock<TestAdapter>(MockBehavior.Strict);
+    var adapter = new Mock<TestAdapter>();
     GoTest.Adapter = adapter.Object;
-    var testEnv = TestEnvironment.From(new string[] { });
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var testEnv = TestEnvironment.From(Array.Empty<string>());
+    var log = new Mock<ILog>();
     var assembly = Assembly.GetExecutingAssembly();
     await GoTest.RunTests(assembly, TestScene, testEnv, log.Object);
   }
@@ -48,7 +51,7 @@ public class GoTestTest : TestClass {
     var log = new Mock<ILog>();
 
     var provider = new Mock<ITestProvider>();
-    provider.Setup(provider => provider.GetTestSuites(It.IsAny<Assembly>())
+    provider.Setup(provider => provider.GetTestSuites(The<Assembly>.IsAnyValue)
       ).Returns(new List<ITestSuite>());
 
     var reporter = new Mock<ITestReporter>();
@@ -57,7 +60,7 @@ public class GoTestTest : TestClass {
     var executor = new Mock<ITestExecutor>();
     executor.Setup(
       executor => executor.Run(
-        TestScene, It.IsAny<List<ITestSuite>>(), reporter.Object
+        TestScene, The<List<ITestSuite>>.IsAnyValue, reporter.Object
       )
     ).Returns(Task.CompletedTask);
 
@@ -72,17 +75,67 @@ public class GoTestTest : TestClass {
       adapter => adapter.CreateReporter(log.Object)
     ).Returns(reporter.Object);
     adapter.Setup(adapter => adapter.CreateExecutor(
-      It.IsAny<ITestMethodExecutor>(),
-      It.IsAny<bool>(),
-      It.IsAny<bool>(),
-      It.IsAny<int>()
+      The<ITestMethodExecutor>.IsAnyValue,
+      The<bool>.IsAnyValue,
+      The<bool>.IsAnyValue,
+      The<int>.IsAnyValue
     )).Returns(executor.Object);
 
     int? testExitCode = null;
     GoTest.OnExit = (node, exitCode) => testExitCode = exitCode;
 
     GoTest.Adapter = adapter.Object;
-    await GoTest.RunTests(Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object);
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
+    );
+    testExitCode.ShouldBe(1);
+  }
+
+  [Test]
+  public async Task ExitsWithFailingExitCodeWhenTestsFailOnCoverage() {
+    var testEnv = TestEnvironment.From(
+      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+    );
+    var log = new Mock<ILog>();
+
+    var provider = new Mock<ITestProvider>();
+    provider.Setup(provider => provider.GetTestSuites(The<Assembly>.IsAnyValue)
+      ).Returns(new List<ITestSuite>());
+
+    var reporter = new Mock<ITestReporter>();
+    reporter.Setup(reporter => reporter.HadError).Returns(true);
+
+    var executor = new Mock<ITestExecutor>();
+    executor.Setup(
+      executor => executor.Run(
+        TestScene, The<List<ITestSuite>>.IsAnyValue, reporter.Object
+      )
+    ).Returns(Task.CompletedTask);
+
+    var adapter = new Mock<ITestAdapter>();
+    adapter.Setup(adapter => adapter.CreateTestEnvironment(testEnv))
+      .Returns(testEnv);
+    adapter.Setup(adapter => adapter.CreateLog(log.Object)).Returns(log.Object);
+    adapter.Setup(
+      adapter => adapter.CreateProvider()
+    ).Returns(provider.Object);
+    adapter.Setup(
+      adapter => adapter.CreateReporter(log.Object)
+    ).Returns(reporter.Object);
+    adapter.Setup(adapter => adapter.CreateExecutor(
+      The<ITestMethodExecutor>.IsAnyValue,
+      The<bool>.IsAnyValue,
+      The<bool>.IsAnyValue,
+      The<int>.IsAnyValue
+    )).Returns(executor.Object);
+
+    int? testExitCode = null;
+    GoTest.OnForceExit = (node, exitCode) => testExitCode = exitCode;
+
+    GoTest.Adapter = adapter.Object;
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
+    );
     testExitCode.ShouldBe(1);
   }
 
@@ -91,5 +144,6 @@ public class GoTestTest : TestClass {
   public void CleanupAll() {
     GoTest.Adapter = GoTest.DefaultAdapter;
     GoTest.OnExit = GoTest.DefaultOnExit;
+    GoTest.OnForceExit = GoTest.DefaultOnForceExit;
   }
 }

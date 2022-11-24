@@ -1,8 +1,10 @@
+namespace GoDotTestTest;
 using System;
 using Godot;
 using GoDotLog;
 using GoDotTest;
-using Moq;
+using LightMock.Generator;
+using LightMoq;
 
 public class TestReporterException : Exception {
   public TestReporterException() : base("TestReporterException") { }
@@ -15,7 +17,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void MethodUpdatePassedLogs() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Test);
@@ -33,7 +35,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void MethodUpdateSkipsStartedEventWhenNotATest() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Cleanup);
@@ -42,13 +44,11 @@ public class TestReporterTest : TestClass {
     reporter.MethodUpdate(
       suite.Object, method.Object, TestMethodEvent.Started()
     );
-
-    log.VerifyAll();
   }
 
   [Test]
   public void MethodUpdateSkipsPassedEventWhenNotATest() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Cleanup);
@@ -58,12 +58,12 @@ public class TestReporterTest : TestClass {
       suite.Object, method.Object, TestMethodEvent.Passed()
     );
 
-    log.VerifyAll();
+    log.AssertNoOtherCalls();
   }
 
   [Test]
   public void MethodUpdateLogsStartedEventForTest() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Test);
@@ -82,7 +82,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void MethodUpdateLogsFailedEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Cleanup);
@@ -103,7 +103,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void MethodUpdateLogsSkippedEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var method = CreateMethod(TestMethodType.Test);
@@ -122,7 +122,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void SuiteUpdateLogsStartedEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var suite = CreateSuite();
@@ -138,7 +138,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void SuiteUpdateLogsFinishedEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var suite = CreateSuite();
@@ -154,7 +154,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void SuiteUpdateLogsErrorEncounteredEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     var suite = CreateSuite();
@@ -170,7 +170,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void UpdateLogsStartedEvent() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     log.Setup(log => log.Print("> ^^ >> Started testing! :3"));
@@ -180,7 +180,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void UpdateLogsFinishedEventWithSuccess() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
     log.Setup(log => log.Print("> OK >> Finished testing! :D"));
@@ -190,7 +190,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void UpdateLogsFinishedEventWithFailureAndOutputsErrors() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
     log.Setup(
       log => log.Print("> !! >> TestSuite::Method [Test] > Test failed! :(")
@@ -221,7 +221,7 @@ public class TestReporterTest : TestClass {
 
   [Test]
   public void OutputsFinalSuccessfulReport() {
-    var log = new Mock<ILog>(MockBehavior.Strict);
+    var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
     log.Setup(
       log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")

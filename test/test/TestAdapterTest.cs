@@ -1,7 +1,8 @@
+namespace GoDotTestTest;
 using Godot;
 using GoDotLog;
 using GoDotTest;
-using Moq;
+using LightMock.Generator;
 using Shouldly;
 
 public class TestAdapterTest : TestClass {
@@ -11,7 +12,8 @@ public class TestAdapterTest : TestClass {
   public void CreateLogUsesLog() {
     var adapter = new TestAdapter();
     var log = new Mock<ILog>();
-    adapter.CreateLog(log.Object).ShouldBe(log.Object);
+    var logObject = log.Object;
+    adapter.CreateLog(logObject).ShouldBe(log.Object);
   }
 
   [Test]

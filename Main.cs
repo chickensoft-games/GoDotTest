@@ -1,3 +1,4 @@
+namespace GoDotTest;
 using Godot;
 
 /// <summary>
@@ -5,4 +6,4 @@ using Godot;
 /// a C# project. Opening project.godot and building will generate the
 /// correct .mono files for correct language server analysis.
 /// </summary>
-public class Main : Node2D { }
+public partial class Main : Node2D { }
