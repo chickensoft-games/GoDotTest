@@ -6,7 +6,8 @@
       "command": "dotnet",
       "type": "process",
       "args": [
-        "build"
+        "build",
+        "--no-restore"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {

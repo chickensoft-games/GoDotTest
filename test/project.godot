@@ -6,13 +6,18 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
-config/name="GoDotTestTests"
-run/main_scene="res://scenes/Main.tscn"
+config/name="GoDotTestTest"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.0", "C#")
 config/icon="res://icon.png"
+
+[dotnet]
+
+project/assembly_name="GoDotTestTest"
 
 [network]
 

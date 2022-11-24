@@ -1,9 +1,12 @@
+namespace GoDotTestTest;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using GoDotTest;
-using Moq;
+using LightMock;
+using LightMock.Generator;
+using LightMoq;
 using Shouldly;
 
 // Use the test system to test itself :O
@@ -52,17 +55,17 @@ public class TestExecutorTest : TestClass {
 
   [Test]
   public async Task RunStopsOnError() {
-    var methodExecutor = new Mock<ITestMethodExecutor>(MockBehavior.Strict);
+    var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
       exe => exe.Run(
-        It.Is<ITestMethod>(
+        The<ITestMethod>.Is(
           method => method.Name == nameof(TestTest2.Test1)
         ),
-        It.IsAny<TestClass>(),
-        It.IsAny<int>()
+        The<TestClass>.IsAnyValue,
+        The<int>.IsAnyValue
       )
-    ).ThrowsAsync(new InvalidOperationException("Ahem"));
+    ).Throws(() => new InvalidOperationException("Ahem"));
 
     var testExecutor = new TestExecutor(
       methodExecutor: methodExecutor.Object,
@@ -87,25 +90,25 @@ public class TestExecutorTest : TestClass {
 
   [Test]
   public async Task RunSkipsSubsequentOnSequentialWhenErrorOccurs() {
-    var methodExecutor = new Mock<ITestMethodExecutor>(MockBehavior.Strict);
+    var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
       exe => exe.Run(
-        It.Is<ITestMethod>(
+        The<ITestMethod>.Is(
           method => method.Name == nameof(TestTest3.Test1)
         ),
-        It.IsAny<TestClass>(),
-        It.IsAny<int>()
+        The<TestClass>.IsAnyValue,
+        The<int>.IsAnyValue
       )
-    ).ThrowsAsync(new InvalidOperationException("Ahem"));
+    ).Throws(() => new InvalidOperationException("Ahem"));
 
     methodExecutor.Setup(
       exe => exe.Run(
-        It.Is<ITestMethod>(
+        The<ITestMethod>.Is(
           method => method.Name == nameof(TestTest3.CleanupAll)
         ),
-        It.IsAny<TestClass>(),
-        It.IsAny<int>()
+        The<TestClass>.IsAnyValue,
+        The<int>.IsAnyValue
       )
     );
 

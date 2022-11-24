@@ -1,3 +1,4 @@
+namespace GoDotTestTest;
 using System.Threading.Tasks;
 using Godot;
 using GoDotTest;
@@ -10,7 +11,7 @@ public class TestMethodTest : TestClass {
   public void RespectsTimeout() {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(TestMethodTest.MethodWithTimeout)
-    );
+    )!;
     var testMethod = new TestMethod(method, TestMethodType.Test);
     testMethod.TimeoutMilliseconds.ShouldBe(150);
   }
@@ -19,7 +20,7 @@ public class TestMethodTest : TestClass {
   public async Task WillNotInvokeAsyncVoidMethod() {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(TestMethodTest.AsyncVoidMethod)
-    );
+    )!;
     var testMethod = new TestMethod(method, TestMethodType.Test);
     await Should.ThrowAsync<AsyncVoidException>(() => testMethod.Invoke(this));
   }
@@ -28,7 +29,7 @@ public class TestMethodTest : TestClass {
   public async Task ThrowsTimeoutExceptionWhenTestTimesOut() {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(TestMethodTest.MethodWithTimeout)
-    );
+    )!;
     var testMethod = new TestMethod(method, TestMethodType.Test);
     await Should.ThrowAsync<TestTimeoutException>(
       () => testMethod.Invoke(this, 200)

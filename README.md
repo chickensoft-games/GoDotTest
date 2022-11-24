@@ -1,8 +1,10 @@
 # GoDotTest
 
-[![Discord](https://img.shields.io/badge/Chickensoft%20Discord-%237289DA.svg?style=flat&logo=discord&logoColor=white)](https://discord.gg/gSjaPgMmYW) ![line coverage][line-coverage] ![branch coverage][branch-coverage]
+[![Chickensoft Badge][chickensoft-badge]][chickensoft-website] [![Discord](https://img.shields.io/badge/Chickensoft%20Discord-%237289DA.svg?style=flat&logo=discord&logoColor=white)][discord] ![line coverage][line-coverage] ![branch coverage][branch-coverage]
 
-> An opinionated test runner system to make running C# tests easier in Godot. Supports code coverage and debugging in-editor.
+C# test runner for Godot. Run tests from the command line, collect code coverage, and debug tests in VSCode.
+
+For Godot 3.x, use versions `<= 1.0.0`. For Godot 4.x, use versions `> 1.0.0`.
 
 ## Installation
 
@@ -88,9 +90,21 @@ The following `launch.json` file provides launch configurations to debug the gam
   "configurations": [
     {
       "name": "Play in Editor",
+      "preLaunchTask": "build",
       "type": "godot-mono",
       "mode": "playInEditor",
       "request": "launch"
+    },
+    {
+      "name": "Play Scene in Editor",
+      "preLaunchTask": "build",
+      "type": "godot-mono",
+      "mode": "executable",
+      "request": "launch",
+      "executable": "${env:GODOT}",
+      "executableArguments": [
+        "${fileDirname}/${fileBasenameNoExtension}.tscn"
+      ]
     },
     // We tell the game to run tests by using command line arguments.
     // This means we can't use the "play in editor" option — we have to launch
@@ -179,7 +193,8 @@ The following `launch.json` file provides launch configurations to debug the gam
       "command": "dotnet",
       "type": "process",
       "args": [
-        "build"
+        "build",
+        "--no-restore"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {
@@ -191,6 +206,61 @@ The following `launch.json` file provides launch configurations to debug the gam
         "clear": false
       }
     }
+  ]
+}
+
+```
+
+### Godot 4.x Launch Configurations
+
+You can reuse the same `tasks.json` as shown above for 3.x, but you need a different `launch.json` file. Be sure to define the `GODOT4` environment variable on your system to point to the Godot 4 executable.
+
+```javascript
+{
+  "version": "0.2.0",
+  "configurations": [
+    // For these launch configurations to work, you need to setup a GODOT
+    // environment variable. On mac or linux, this can be done by adding
+    // the following to your .zshrc, .bashrc, or .bash_profile file:
+    // export GODOT="/Applications/Godot.app/Contents/MacOS/Godot"
+    {
+      "name": "Play",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${env:GODOT4}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+    },
+    {
+      "name": "Debug Tests",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${env:GODOT4}",
+      "args": [
+        // These command line flags are used by GoDotTest to run tests.
+        "--run-tests",
+        "--quit-on-finish"
+      ],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+    },
+    {
+      "name": "Debug Current Test",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${env:GODOT4}",
+      "args": [
+        // These command line flags are used by GoDotTest to run tests.
+        "--run-tests=${fileBasenameNoExtension}",
+        "--quit-on-finish"
+      ],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+    },
   ]
 }
 ```
@@ -251,7 +321,11 @@ limits/debugger_stdout/max_warnings_per_second=500
 
 ## Assertions and Mocking
 
-GoDotTest doesn't provide any assertions or mocking. It's simply a test provider and test running system. Eventually, GoDotTest will include a few asynchronous utilities to make integration testing scenes easier, allowing you to simulate frames, input, etc, but there are no plans to ever provide an assertion or mocking system — you can use whatever you like!
+GoDotTest is only a test provider and test execution system. Keeping the scope of GoDotTest small allows us to update it rapidly and ensure it's always working well with the latest Godot versions.
+
+For mocking, we recommend [Moq] for Godot 3.x and [LightMock.Generator] for Godot 4.x (since Moq won't work in Godot 4 until the [collectible assemblies] support is merged). If you want LightMock's API to more closely resemble Moq's, you can also use Chickensoft's [LightMoq] adapter.
+
+For integration tests, we recommend [GodotTestDriver]. GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
 
 ## Coverage
 
@@ -260,6 +334,7 @@ If your code is configured correctly to switch to the test scene when `--run-tes
 ![test coverage](doc_assets/test_coverage.png)
 
 First, install [coverlet] and [reportgenerator].
+
 
 ```sh
 dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -270,6 +345,10 @@ dotnet tool update --global coverlet.console
 ```
 
 To run Godot with code coverage enabled, use a script like the following (or reference the local [`coverage.sh`](test/coverage.sh).
+
+**Note:** On macOS, you may need to run `chmod +x ./coverage.sh` to add execution permissions before you are able to run the `coverage.sh` script.
+
+### Code Coverage Bash Script for Godot 3.x
 
 ```sh
 coverlet .mono/temp/bin/Debug/ --target $GODOT --targetargs \
@@ -286,7 +365,33 @@ reportgenerator \
 open coverage/report/index.html
 ```
 
-**Note:** On macOS, you may need to run `chmod +x ./coverage.sh` to add execution permissions before you are able to run the `coverage.sh` script.
+### Code Coverage Bash Script for Godot 4.x
+
+You'll need the latest version of coverlet (> 3.2.0) that hasn't been released yet. You can build coverlet from source by installing .NET 5 SDK and following their [contribution guidelines][coverlet-contribution].
+
+You also need to pass the `--coverage` flag to Godot for GoDotTest to exit correctly. Godot 4's exit behavior doesn't play nicely with coverlet, so GoDotTest needs to know that it should force exit the process via the .NET API's instead of routing the exit request through Godot. This does cause a few error messages to appear as the process exits, but it does not cause any other problems.
+
+```sh
+# This requires a GODOT4 environment variable.
+
+# Be sure to replace the PATH/TO/coverlet.console/... with the path to
+# your newly built version of coverlet below.
+
+dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll "./.godot/mono/temp/bin/Debug" --verbosity detailed \
+  --target $GODOT4 \
+  --targetargs "--run-tests --coverage --quit-on-finish" \
+  --format "opencover" \
+  --output "./coverage/coverage.xml" \
+  --exclude-by-file "**/scenes/**/*.cs" \
+  --exclude-by-file "**/test/**/*.cs" \
+  --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
+  --exclude-assemblies-without-sources "missingall"
+
+reportgenerator \
+  -reports:"./coverage/coverage.xml" \
+  -targetdir:"./coverage/report" \
+  -reporttypes:Html
+```
 
 ## How It Works
 
@@ -311,11 +416,19 @@ If you need to customize how tests are loaded and run, you can use the code in [
 - `--quit-on-finish`: The presence of this flag indicates that the test runner should exit the application as soon as it is finished running tests.
 - `--stop-on-error`: The presence of this flag indicates that the test runner should stop running tests when it encounters the first error in any test suite. Without this flag, it will attempt to run all of the test suites.
 - `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`. 
+- `--coverage`: Required when running tests with the intent to collect coverage in Godot 4. Allows GoDotTest to force-exit so that coverlet picks up on the coverage correctly.
 
 For more information about command line flags, see [`TestEnvironment.cs`](src/TestEnvironment.cs).
 
+## Contributing
+
+For information on contributing, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 <!-- Links -->
 
+[chickensoft-badge]: https://chickensoft.games/images/chickensoft/chickensoft_badge.svg
+[chickensoft-website]: https://chickensoft.games
+[discord]: https://discord.gg/gSjaPgMmYW
 [line-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/line_coverage.svg
 [branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/branch_coverage.svg
 [GoDotTest]: https://www.nuget.org/packages/Chickensoft.GoDotTest/
@@ -326,3 +439,8 @@ For more information about command line flags, see [`TestEnvironment.cs`](src/Te
 [lcov]: https://github.com/linux-test-project/lcov
 [Shouldly]: https://github.com/shouldly/shouldly
 [Moq]: https://github.com/moq/moq4
+[coverlet-contribution]: https://github.com/coverlet-coverage/coverlet/blob/master/CONTRIBUTING.md
+[GodotTestDriver]: https://github.com/derkork/godot-test-driver
+[collectible assemblies]: https://github.com/godotengine/godot/issues/66060
+[LightMoq]: https://github.com/chickensoft-games/LightMoq
+[LightMock.Generator]: https://github.com/anton-yashin/LightMock.Generator

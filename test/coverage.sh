@@ -1,21 +1,32 @@
 #!/bin/bash
-dotnet build
 
-# Only collect coverage for go_dot_test addon:
-coverlet .mono/temp/bin/Debug/ --target $GODOT --targetargs \
-  "--run-tests --quit-on-finish" --format "lcov" \
-  --output ./coverage/coverage.info \
+dotnet build --no-restore
+
+# This requires a GODOT4 environment variable.
+
+dotnet ~/coverlet/src/coverlet.console/bin/Debug/net5.0/coverlet.console.dll \
+  "./.godot/mono/temp/bin/Debug" --verbosity detailed \
+  --target $GODOT4 \
+  --targetargs "--run-tests --coverage --quit-on-finish" \
+  --format "opencover" \
+  --output "./coverage/coverage.xml" \
   --exclude-by-file "**/scenes/**/*.cs" \
-  --exclude-by-file "**/test/**/*.cs"
+  --exclude-by-file "**/test/**/*.cs" \
+  --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
+  --exclude-assemblies-without-sources "missingall"
+
+# we filter out local project references with -assemblyfilters
 
 reportgenerator \
-  -reports:"./coverage/coverage.info" \
+  -reports:"./coverage/coverage.xml" \
   -targetdir:"./coverage/report" \
-  -reporttypes:Html
+  "-assemblyfilters:-GoDotCollections;-GoDotLog" \
+  -reporttypes:Html,Badges
 
 reportgenerator \
-  -reports:"./coverage/coverage.info" \
+  -reports:"./coverage/coverage.xml" \
   -targetdir:"./badges" \
+  "-assemblyfilters:-GoDotCollections;-GoDotLog" \
   -reporttypes:Badges
 
 mv ./badges/badge_branchcoverage.svg ./reports/branch_coverage.svg
