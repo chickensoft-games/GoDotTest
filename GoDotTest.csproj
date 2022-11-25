@@ -15,7 +15,7 @@
     <Company>Chickensoft</Company>
 
     <PackageId>Chickensoft.GoDotTest</PackageId>
-    <PackageVersion>1.1.0-beta6</PackageVersion>
+    <PackageVersion>1.1.1-beta6</PackageVersion>
     <PackageReleaseNotes>GoDotTest release.</PackageReleaseNotes>
     <PackageTags>Godot;Test;Testing;Runner;Chickensoft;Gamedev;Utility;Utilities</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -31,8 +31,8 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <ProjectReference Include="../go_dot_log/GoDotLog.csproj" />
-    <ProjectReference Include="../go_dot_collections/GoDotCollections.csproj" />
+    <ProjectReference Include="../go_dot_log/GoDotLog.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../go_dot_collections/GoDotCollections.csproj" PrivateAssets="All" />
     <!-- Required for inheritdoc -->
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>
