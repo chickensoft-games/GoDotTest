@@ -382,6 +382,7 @@ dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll "./.godot/
   --targetargs "--run-tests --coverage --quit-on-finish" \
   --format "opencover" \
   --output "./coverage/coverage.xml" \
+  --exclude "**/*.g.cs" \
   --exclude-by-file "**/scenes/**/*.cs" \
   --exclude-by-file "**/test/**/*.cs" \
   --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \

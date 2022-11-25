@@ -13,6 +13,7 @@ dotnet ~/coverlet/src/coverlet.console/bin/Debug/net5.0/coverlet.console.dll \
   --exclude-by-file "**/scenes/**/*.cs" \
   --exclude-by-file "**/test/**/*.cs" \
   --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
+  --exclude "**/*.g.cs" \
   --exclude-assemblies-without-sources "missingall"
 
 # we filter out local project references with -assemblyfilters
