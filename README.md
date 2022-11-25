@@ -4,6 +4,10 @@
 
 C# test runner for Godot. Run tests from the command line, collect code coverage, and debug tests in VSCode.
 
+<p align="center">
+<img alt="GoDotTest Logo" src="doc_assets/go_dot_test.svg" width="125">
+</p>
+
 For Godot 3.x, use versions `<= 1.0.0`. For Godot 4.x, use versions `> 1.0.0`.
 
 ## Installation
