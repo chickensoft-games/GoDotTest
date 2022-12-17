@@ -381,21 +381,64 @@ You also need to pass the `--coverage` flag to Godot for GoDotTest to exit corre
 # Be sure to replace the PATH/TO/coverlet.console/... with the path to
 # your newly built version of coverlet below.
 
-dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll "./.godot/mono/temp/bin/Debug" --verbosity detailed \
+dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll \
+  "./.godot/mono/temp/bin/Debug" --verbosity detailed \
   --target $GODOT4 \
   --targetargs "--run-tests --coverage --quit-on-finish" \
   --format "opencover" \
   --output "./coverage/coverage.xml" \
-  --exclude "**/*.g.cs" \
-  --exclude-by-file "**/scenes/**/*.cs" \
   --exclude-by-file "**/test/**/*.cs" \
   --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
   --exclude-assemblies-without-sources "missingall"
 
+
+# excluding files matching "**/test/**/*.cs" prevents coverlet from collecting
+# coverage on the tests themselves. 
+#
+# we filter out local project references with -assemblyfilters
+# if you're gathering too much coverage, add the unwanted assemblies like so:
+# "-assemblyfilters:-AssemblyToIgnore1;-AssemblyToIgnore2"
+# ^ quotes are important.
+
 reportgenerator \
   -reports:"./coverage/coverage.xml" \
   -targetdir:"./coverage/report" \
-  -reporttypes:Html
+  "-assemblyfilters:-AssemblyToIgnore" \
+  -reporttypes:"Html"
+
+reportgenerator \
+  -reports:"./coverage/coverage.xml" \
+  -targetdir:"./badges" \
+  "-assemblyfilters:-AssemblyToIgnore" \
+  -reporttypes:"Badges"
+
+mv ./badges/badge_branchcoverage.svg ./reports/branch_coverage.svg
+mv ./badges/badge_linecoverage.svg ./reports/line_coverage.svg
+
+rm -rf ./badges
+
+# Open coverage report in default browser based on OS.
+
+case "$(uname -s)" in
+
+   Darwin)
+     echo 'Mac OS X'
+     open coverage/report/index.htm
+     ;;
+
+   Linux)
+     echo 'Linux'
+     ;;
+
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     echo 'MS Windows'
+     start coverage/report/index.htm
+     ;;
+
+   *)
+     echo 'Other OS'
+     ;;
+esac
 ```
 
 ## How It Works

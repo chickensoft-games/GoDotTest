@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.0.0-beta.6">
+<Project Sdk="Godot.NET.Sdk/4.0.0-beta.8">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -11,7 +11,7 @@
     <RootNamespace>GoDotTestTest</RootNamespace>
     <!-- To show generated files -->
     <!-- <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>_generated</CompilerGeneratedFilesOutputPath> -->
+    <CompilerGeneratedFilesOutputPath>.generated</CompilerGeneratedFilesOutputPath> -->
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
