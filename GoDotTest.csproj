@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.0.0-beta.16">
+<Project Sdk="Godot.NET.Sdk/4.0.0-beta.17">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -15,7 +15,7 @@
     <Company>Chickensoft</Company>
 
     <PackageId>Chickensoft.GoDotTest</PackageId>
-    <PackageVersion>1.1.2-godot.4.beta.16</PackageVersion>
+    <PackageVersion>1.1.2-beta.4.0.0.17</PackageVersion>
     <PackageReleaseNotes>GoDotTest release.</PackageReleaseNotes>
     <PackageTags>Godot;Test;Testing;Runner;Chickensoft;Gamedev;Utility;Utilities</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
