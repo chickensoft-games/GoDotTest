@@ -18,10 +18,15 @@
     {
       "matchPackagePrefixes": [
         "GodotSharp",
-        "Godot.NET.Sdk",
-        "Chickensoft"
+        "Godot.NET.Sdk"
       ],
       "allowedVersions": "/^(\\d+\\.\\d+\\.\\d+)(-(beta|rc)\\.(\\d+)(\\.\\d+)*)?$/"
+    },
+    {
+      "matchPackagePrefixes": [
+        "Chickensoft"
+      ],
+      "allowedVersions": "^(\\d+\\.\\d+\\.\\d+)(-godot(\\d+\\.)+\\d+-.*)$"
     }
   ]
 }
