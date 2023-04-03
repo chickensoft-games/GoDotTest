@@ -1,23 +1,38 @@
 # Contributing
 
-Thanks for helping! 
+Thank you for taking the time to read this contributing guide and for showing interest in helping this project!
 
-GoDotTest depends on [GoDotLog] and [GoDotCollections], but because both of those have test projects that depend on GoDotTest, we reference them locally to make it easier to update each package when the Godot SDK version changes in the `.csproj` files.
+## Getting Started
 
-When working with GoDotTest, make sure you have clones of [GoDotLog] and [GoDotCollections] alongside GoDotTest, as shown in the following:
+Need a helping hand to get started? Check out these resources!
 
-```
-- your projects directory/
-  - go_dot_log/
-    - ...
-  - go_dot_collections/
-    - ...
-  - go_dot_test/
-    - this file, CONTRIBUTING.md
-    - ...
-```
+- [Discord Server][discord]
+- [Chickensoft Website][chickensoft]
 
-Be sure to run `dotnet restore` in each project. Sometimes the projects can have trouble building if `dotnet restore` isn't run in the correct order, so you may have to play with the order to get it all working. Each project will also probably have to be opened in Godot and built at least once to generate the `.godot` build folders for in each project for C# to compile.
+Please read our [code of conduct](#code-of-conduct). We do our best to treat others fairly and foster a welcoming environment.
 
-[GoDotLog]: https://github.com/chickensoft-games/go_dot_log
-[GoDotCollections]: https://github.com/chickensoft-games/go_dot_collections
+## Project Setup
+
+This is a C# nuget package, for use with the .NET SDK 6 or 7. As such, the `dotnet` tool will allow you to restore packages and build projects.
+
+The `Chickensoft.GoDotTest.Tests` project must be built with the Godot editor at least once before `dotnet build` will succeed. Godot has to generate the .NET bindings for the project, since tests run in an actual game environment.
+
+## Coding Guidelines
+
+Your IDE should automatically adhere to the style guidelines in the provided `.editorconfig` file. Please try to keep lines under 80 characters long whenever possible.
+
+We try to write tests for our projects to ensure a certain level of quality. We are willing to give you support and guidance if you need help!
+
+## Code of Conduct
+
+We follow the [Contributor Covenant][covenant].
+
+In short:
+
+> We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.
+
+<!-- Links -->
+
+[discord]: https://discord.gg/gSjaPgMmYW
+[chickensoft]: https://chickensoft.games
+[covenant]: https://www.contributor-covenant.org/version/2/1/code_of_conduct/

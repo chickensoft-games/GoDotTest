@@ -1,18 +1,18 @@
 # GoDotTest
 
-[![Chickensoft Badge][chickensoft-badge]][chickensoft-website] [![Discord](https://img.shields.io/badge/Chickensoft%20Discord-%237289DA.svg?style=flat&logo=discord&logoColor=white)][discord] ![line coverage][line-coverage] ![branch coverage][branch-coverage]
+[![Chickensoft Badge][chickensoft-badge]][chickensoft-website] [![Discord][discord-badge]][discord] [![Read the docs][read-the-docs-badge]][docs] ![line coverage][line-coverage] ![branch coverage][branch-coverage]
 
 C# test runner for Godot. Run tests from the command line, collect code coverage, and debug tests in VSCode.
 
-<p align="center">
-<img alt="GoDotTest Logo" src="doc_assets/go_dot_test.svg" width="125">
-</p>
+---
 
-For Godot 3.x, use versions `<= 1.0.0`. For Godot 4.x, use versions `> 1.0.0`.
+<p align="center">
+<img alt="Chickensoft.GoDotTest" src="Chickensoft.GoDotTest/icon.png" width="200">
+</p>
 
 ## Installation
 
-Find the latest version of [GoDotTest] on nuget.
+Find the latest version of [GoDotTest] on nuget. GoDotTest versions that use pre-release versions of Godot have a matching prerelease label in the version name.
 
 Add the latest version of GoDotTest to your `*.csproj` file. Make sure to replace `*VERSION*` with the latest version.
 
@@ -22,13 +22,9 @@ Add the latest version of GoDotTest to your `*.csproj` file. Make sure to replac
 </ItemGroup>
 ```
 
-You can use GoDotTest with C# 10 and Godot to run, debug, and collect code coverage for your project inside Godot.
-
-For C# 10 to work, you need the dotnet 6 SDK installed. See what you have installed with `dotnet --info`. On mac, Godot 3 can have trouble finding .NET 6 if you have older SDK's installed, due to the dotnet [path search order][godot-dotnet-paths]. There are also a few [work-arounds][dotnet-path-workaround] available.
-
 ## Examples
 
-Here's a simple test which does absolutely nothing. It can use the `TestScene` node available to it from its base class to manipulate the scene tree, if needed.
+The example below shows how unit tests are written. Each test extends the provided `TestClass` and receives the test scene as a constructor argument which is passed to the base class. The test scene can be used by tests to create nodes and add them to the scene tree.
 
 ```csharp
 using Godot;
@@ -56,137 +52,29 @@ public class ExampleTest : TestClass {
 }
 ```
 
-Below is the test execution output GoDoTest shows for its own tests: 
+Tests can leverage lifecycle attributes to perform setup steps and/or cleanup steps. The `[Setup]` attribute is called before each test and the `[Cleanup]` attribute is called after each test.
 
-![test output](doc_assets/test_output.png)
+Likewise, the `[SetupAll]` attribute is called before the first test runs, and the `[CleanupAll]` attribute is called after all the tests have run. Tests are always executed in the order that they are defined in the test class.
+
+Below is the test execution output GoDoTest shows for its own tests:
+
+![test output](docs/test_output.png)
 
 ## Setup
 
 You can debug tests in Godot from Visual Studio Code. To do this, you will need to specify the `GODOT` environment variable for the following launch configurations and scripts to work correctly. The `GODOT` variable should point to the path of the Godot executable.
 
-You will need to specify the `GODOT` environment variable in your `.zshrc` or `.bash_profile` file (or set it up manually on Windows).
-
-```sh
-# Dotnet
-export DOTNET_CLI_TELEMETRY_OPTOUT=1 # Disable analytics
-DOTNET_ROOT="/usr/local/share/dotnet"
-# Mono
-export PATH="/Library/Frameworks/Mono.framework/Versions/Current/Commands/mono:$PATH"
-export PATH="$HOME/.dotnet/tools:$PATH"
-# For dotnet 6 SDK:
-export PATH="/usr/local/share/dotnet:/usr/local/share/dotnet/sdk:$PATH"
-# Godot
-# Path go Godot executable, on mac it might look like this:
-export GODOT="/Applications/Godot.app/Contents/MacOS/Godot"
-```
+See the [Chickensoft Setup Guide][chickensoft-setup-guide] for more information about setting up your development environment for use with Godot and GoDotTest.
 
 ## Debugging
 
 The following `launch.json` file provides launch configurations to debug the game, debug all the tests, or debug the currently open test in Visual Studio Code. To debug the currently open test, make sure the class name of the test matches the file name, as is typical in C#.
 
-### Godot 3.x Launch Configurations
+### Godot 4 Launch Configurations
 
-> You can also just copy and paste `.vscode/launch.json` and `.vscode/tasks.json` from this repository into your own project that uses GoDotTest.
+Place the following `tasks.json` and `launch.json` inside a folder named `.vscode` in the root of your project. If you open your project from the root from within VSCode, you will be able to debug your game and its tests.
 
-```jsonc
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Play in Editor",
-      "preLaunchTask": "build",
-      "type": "godot-mono",
-      "mode": "playInEditor",
-      "request": "launch"
-    },
-    {
-      "name": "Play Scene in Editor",
-      "preLaunchTask": "build",
-      "type": "godot-mono",
-      "mode": "executable",
-      "request": "launch",
-      "executable": "${env:GODOT}",
-      "executableArguments": [
-        "${fileDirname}/${fileBasenameNoExtension}.tscn"
-      ]
-    },
-    // We tell the game to run tests by using command line arguments.
-    // This means we can't use the "play in editor" option — we have to launch
-    // our own instance of Godot.
-    //
-    // Since passing scene files to Godot doesn't seem to work easily with the
-    // C# Tools for Godot VSCode plugin, we use the path to Godot from the
-    // environment. Make sure you set the GODOT variable to your Godot
-    // executable.
-    //
-    // On mac, you can add the following to your zsh rc file:
-    // alias godot="/Applications/Godot.app/Contents/MacOS/Godot"
-    {
-      "name": "Debug Tests",
-      "type": "godot-mono",
-      "mode": "executable",
-      "request": "launch",
-      "executable": "${env:GODOT}",
-      "executableArguments": [
-        "--run-tests",
-        "--quit-on-finish"
-      ],
-      "preLaunchTask": "build"
-    },
-    // Debug the current test!
-    //
-    // The test runner will look for the class with the same name as the test
-    // file that's currently open (disregarding its folder and file extension).
-    // The search is case-insensitive.
-    {
-      "name": "Debug Current Test",
-      "type": "godot-mono",
-      "mode": "executable",
-      "request": "launch",
-      "executable": "${env:GODOT}",
-      "executableArguments": [
-        "--run-tests=${fileBasenameNoExtension}",
-        "--quit-on-finish"
-      ],
-      "preLaunchTask": "build"
-    },
-    {
-      "name": "Launch",
-      "type": "godot-mono",
-      "request": "launch",
-      "mode": "executable",
-      "preLaunchTask": "build",
-      "executable": "/Applications/Godot.app/Contents/MacOS/Godot",
-      "executableArguments": [
-        "--path",
-        "${workspaceRoot}"
-      ]
-    },
-    {
-      "name": "Launch (Select Scene)",
-      "type": "godot-mono",
-      "request": "launch",
-      "mode": "executable",
-      "preLaunchTask": "build",
-      "executable": "/Applications/Godot.app/Contents/MacOS/Godot",
-      "executableArguments": [
-        "--path",
-        "${workspaceRoot}",
-        "${command:SelectLaunchScene}"
-      ]
-    },
-    {
-      "name": "Attach",
-      "type": "godot-mono",
-      "request": "attach",
-      "address": "localhost",
-      "port": 23685
-    }
-  ]
-}
-```
-
-**Note:** You will also need the accompanying `tasks.json` (below) to be able to build the game before running the debug configurations for testing.
+#### tasks.json
 
 ```jsonc
 {
@@ -212,12 +100,9 @@ The following `launch.json` file provides launch configurations to debug the gam
     }
   ]
 }
-
 ```
 
-### Godot 4.x Launch Configurations
-
-You can reuse the same `tasks.json` as shown above for 3.x, but you need a different `launch.json` file. Be sure to define the `GODOT4` environment variable on your system to point to the Godot 4 executable.
+#### launch.json
 
 ```javascript
 {
@@ -286,102 +171,101 @@ public class Tests : Node2D {
 
 ## Main Scene
 
-In your main scene, you need to determine if tests should be run. GoDotTest relies on the presence of certain command line arguments to determine if tests should be run.
+How you utilize GoDotTest will vary based on whether you are creating a game or a nuget package for use with Godot and C#.
 
-In your main scene, you should construct a test environment from the command
-line arguments and determine if tests should be run. If they are, you can switch to the test scene. Otherwise, you can switch to the game scene. If you've written your own scene switching system, you can adapt this file to use that accordingly.
+### Games
+
+In your main scene, you can tell GoDotTest to look at the command line arguments given to the Godot process and construct a test environment object that can be used to determine if tests should be run.
+
+If tests need to be run, you can instruct GoDotTest to find and execute tests in the current assembly.
+
+Because you typically do not want to include tests in release builds of your game, you can exclude all of the test files from the build by adding the following to your `.csproj` file (change `test/**/*` to the relative path of your test files within the project if they are not in a folder at the root called `test`):
+
+```xml
+<PropertyGroup>
+  <DefaultItemExcludes Condition="'$(Configuration)' == 'ExportRelease'">
+    $(DefaultItemExcludes);test/**/*
+  </DefaultItemExcludes>
+</PropertyGroup>
+```
+
+Add the following script to the main scene (the entry point) of your Godot game. If you already have a customized main scene, rename it to `Game.tscn` and make a new main scene that is completely empty. If you are making a 3D game, make the root a Node3D instead of a Node2D.
+
+Note that this script relies on your game's actual beginning scene to be `Game.tscn`: if you don't have one, you'll need to create one. If tests do not need to be run, your game will start and immediately switch to `Game.tscn`. Otherwise, the main scene will ask GoDotTest to find and run tests in the current assembly.
 
 ```csharp
-using Godot;
-using GoDotTest;
+namespace YourGame;
 
-public class Main : Node2D {
+using Godot;
+
+#if DEBUG
+using System.Reflection;
+using GoDotTest;
+#endif
+
+public partial class Main : Node2D {
+  public TestEnvironment Environment = default!;
+
   public override void _Ready() {
-    var testEnv = TestEnvironment.From(OS.GetCmdlineArgs());
-    if (testEnv.ShouldRunTests) {
-      GetTree().ChangeScene("res://test/Tests.tscn");
+#if DEBUG
+    // If this is a debug build, use GoDotTest to examine the
+    // command line arguments and determine if we should run tests.
+    Environment = TestEnvironment.From(OS.GetCmdlineArgs());
+    if (Environment.ShouldRunTests) {
+      CallDeferred("RunTests");
+      return;
     }
-    else {
-      GetTree().ChangeScene("res://scenes/Game.tscn");
-    }
+#endif
+    // If we don't need to run tests, we can just switch to the game scene.
+    GetTree().ChangeSceneToFile("res://src/Game.tscn");
   }
+
+  private void RunTests()
+    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this, Environment);
 }
 ```
 
+### Packages
+
+If you're creating a nuget package for use with Godot, you should create a separate test project that references your nuget package project.
+
+Inside your test project, create a main scene and add the following script to it.
+
+```csharp
+namespace MyProject.Tests;
+
+using System.Reflection;
+using Godot;
+using GoDotTest;
+
+public partial class Tests : Node2D {
+  public override void _Ready()
+    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
+}
+```
+
+For best results, consider using the `dotnet new` [GodotPackage] template by Chickensoft to quickly create a new Godot C# package project that is already setup to work with GoDotTest.
+
 ## Logging
 
-Make sure you add this to your `project.godot` file so you can see test logs when they're running.
-
-```
-[network]
-
-; Required to see all the logs when tests are running!
-
-limits/debugger_stdout/max_chars_per_second=200000
-limits/debugger_stdout/max_messages_per_frame=500
-limits/debugger_stdout/max_errors_per_second=500
-limits/debugger_stdout/max_warnings_per_second=500
-```
+If you have trouble seeing test logs, try increasing the `Max Chars per Second`, `Max Queued Messages`, `Max Errors per Second`, and `Max Warnings per Second` in the Network Limits of your project's settings (you may need to toggle Advanced Settings on to see them).
 
 ## Assertions and Mocking
 
 GoDotTest is only a test provider and test execution system. Keeping the scope of GoDotTest small allows us to update it rapidly and ensure it's always working well with the latest Godot versions.
 
-For mocking, we recommend [Moq] for Godot 3.x and [LightMock.Generator] for Godot 4.x (since Moq won't work in Godot 4 until the [collectible assemblies] support is merged). If you want LightMock's API to more closely resemble Moq's, you can also use Chickensoft's [LightMoq] adapter.
+For mocking, we recommend [LightMock.Generator]. It is similar in usage to the popular `Moq` library, but generates mocks at compile-time ensuring maximum compatibility in any .NET environment. To make LightMock's API even more closely resemble Moq's, you can use Chickensoft's [LightMoq] adapter.
 
 For integration tests, we recommend [GodotTestDriver]. GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
 
 ## Coverage
 
-If your code is configured correctly to switch to the test scene when `--run-tests` is passed in (see above), you can run all of your tests and generate code coverage while Godot is running.
+If your code is configured correctly to switch to the test scene when `--run-tests` is passed in (see above), you can use [coverlet] tool to run Godot and collect code coverage from your tests.
 
-![test coverage](doc_assets/test_coverage.png)
-
-First, install [coverlet] and [reportgenerator].
-
+![test coverage](docs/test_coverage.png)
 
 ```sh
-dotnet tool install --global dotnet-reportgenerator-globaltool
-dotnet tool install --global coverlet.console
-# Do this too if you're on an M1 mac / ARMx64 system:
-# Works around https://github.com/dotnet/efcore/issues/27787#issuecomment-1110061226
-dotnet tool update --global coverlet.console
-```
-
-To run Godot with code coverage enabled, use a script like the following (or reference the local [`coverage.sh`](test/coverage.sh).
-
-**Note:** On macOS, you may need to run `chmod +x ./coverage.sh` to add execution permissions before you are able to run the `coverage.sh` script.
-
-### Code Coverage Bash Script for Godot 3.x
-
-```sh
-coverlet .mono/temp/bin/Debug/ --target $GODOT --targetargs \
-  "--run-tests --quit-on-finish" --format "lcov" \
-  --output ./coverage/coverage.info \
-  --exclude-by-file "**/test/**/*.cs" # Don't collect coverage for the tests
-
-reportgenerator \
-  -reports:"./coverage/coverage.info" \
-  -targetdir:"./coverage/report" \
-  -reporttypes:Html
-
-# Open the coverage report in your browser.
-open coverage/report/index.html
-```
-
-### Code Coverage Bash Script for Godot 4.x
-
-You'll need the latest version of coverlet (> 3.2.0) that hasn't been released yet. You can build coverlet from source by installing .NET 5 SDK and following their [contribution guidelines][coverlet-contribution].
-
-You also need to pass the `--coverage` flag to Godot for GoDotTest to exit correctly. Godot 4's exit behavior doesn't play nicely with coverlet, so GoDotTest needs to know that it should force exit the process via the .NET API's instead of routing the exit request through Godot. This does cause a few error messages to appear as the process exits, but it does not cause any other problems.
-
-```sh
-# This requires a GODOT4 environment variable.
-
-# Be sure to replace the PATH/TO/coverlet.console/... with the path to
-# your newly built version of coverlet below.
-
-dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll \
+coverlet \
   "./.godot/mono/temp/bin/Debug" --verbosity detailed \
   --target $GODOT4 \
   --targetargs "--run-tests --coverage --quit-on-finish" \
@@ -389,106 +273,53 @@ dotnet PATH/TO/coverlet.console/bin/Debug/net5.0/coverlet.console.dll \
   --output "./coverage/coverage.xml" \
   --exclude-by-file "**/test/**/*.cs" \
   --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
+  --exclude-by-file "**/Godot.SourceGenerators/**/*.cs" \
   --exclude-assemblies-without-sources "missingall"
-
-
-# excluding files matching "**/test/**/*.cs" prevents coverlet from collecting
-# coverage on the tests themselves. 
-#
-# we filter out local project references with -assemblyfilters
-# if you're gathering too much coverage, add the unwanted assemblies like so:
-# "-assemblyfilters:-AssemblyToIgnore1;-AssemblyToIgnore2"
-# ^ quotes are important.
-
-reportgenerator \
-  -reports:"./coverage/coverage.xml" \
-  -targetdir:"./coverage/report" \
-  "-assemblyfilters:-AssemblyToIgnore" \
-  -reporttypes:"Html"
-
-reportgenerator \
-  -reports:"./coverage/coverage.xml" \
-  -targetdir:"./badges" \
-  "-assemblyfilters:-AssemblyToIgnore" \
-  -reporttypes:"Badges"
-
-mv ./badges/badge_branchcoverage.svg ./reports/branch_coverage.svg
-mv ./badges/badge_linecoverage.svg ./reports/line_coverage.svg
-
-rm -rf ./badges
-
-# Open coverage report in default browser based on OS.
-
-case "$(uname -s)" in
-
-   Darwin)
-     echo 'Mac OS X'
-     open coverage/report/index.htm
-     ;;
-
-   Linux)
-     echo 'Linux'
-     ;;
-
-   CYGWIN*|MINGW32*|MSYS*|MINGW*)
-     echo 'MS Windows'
-     start coverage/report/index.htm
-     ;;
-
-   *)
-     echo 'Other OS'
-     ;;
-esac
 ```
+
+The `--run-tests`, `--coverage`, and `--quit-on-finish` flags are specific to GoDotTest — they mean nothing to Godot itself. If your main scene is configured to utilize GoDotTest correctly as shown above, you can expect the [coverlet] tool to invoke Godot with the correct arguments to begin testing.
+
+Because setting up test coverage requires a carefully constructed project, we recommend checking out the Chickensoft [GodotPackage section on collecting coverage][TestCoverage] and looking at the included `coverage.sh` script in that project.
+
+> The `--coverage` flag tells GoDotTest that the Godot process is being executed with the intent to collect coverage. When the `--coverage` flag is supplied, GoDotTest will force-exit the process in such a way that allows it to set the exit code for the entire process, since Godot's `SceneTree.Quit(int exitCode)` method does not actually set the exit code. Force-exiting from .NET by bypassing Godot causes a few error messages to appear as the process exits, but it does not cause any other problems and can be safely disregarded.
 
 ## How It Works
 
-GoDotTest uses C# Reflection to find all classes in the current assembly that extend the `TestClass` it provides. It uses a `TestProvider` to find and load test suites (classes that extend `TestClass`) that can be run. It references a `TestEnvironment` that is created from the command line arguments given to the game/Godot and filters the test suites based on the presence of a test suite name, if given.
-
+The GoDotTest `TestProvider` uses reflection to find all test suites (classes that extend the provided `TestClass`) in the current assembly. If a test environment is not given to GoDotTest, it constructs its own `TestEnvironment` that represents the command line arguments given to Godot when it started and filters the test suites based on the presence of a test suite name, if given. Otherwise, it will run all test suites.
 
 GoDotTest uses a `TestExecutor` to run methods in the order they are declared in a `TestClass`. Test methods are denoted with the `[Test]` attribute.
 
 Test output is displayed by a `TestReporter` which responds to test events.
 
-Auxiliary methods, such as `Setup` and `Cleanup` are run before and after each test, respectively. They can be specified with the `[Setup]` and `[Cleanup]` attributes on methods in a `TestClass`.
+GoDotTest will `await` any `async Task` test methods it encounters. Tests do not run in parallel, nor are there any plans to add that functionality as that would cause race conditions when writing visual or integration-style tests. The focus of GoDotTest is to provide a reliable, C#-first approach to testing in Godot that runs tests in a very simple and deterministic manner.
 
-Additionally, any methods tagged with the `[SetupAll]` or `[CleanupAll]` attributes will be run once at the start of the test suite and once at the end, respectively.
-
-GoDotTest will `await` any `async Task` test methods it encounters. Tests do not run in parallel, nor are there any plans to add that functionality. The focus of GoDotTest is to provide a simple, C#-first approach to testing in Godot that runs tests in a very simple and deterministic manner.
-
-If you need to customize how tests are loaded and run, you can use the code in [`GoTest.cs`](src/GoTest.cs) as a starting point.
+If you need to customize how tests are loaded and run, you can use the code in [`GoTest.cs`](Chickensoft.GoDotTest/src/GoTest.cs) as a starting point.
 
 ## Command Line Arguments
 
 - `--run-tests`: The presence of this flag informs your game that tests should be run. If you've setup your main scene to redirect to the test scene when it finds this flag (as described above), you can use pass this flag in when running Godot from the command line (for debugging or CI/CD purposes) to run your test(s).
 - `--quit-on-finish`: The presence of this flag indicates that the test runner should exit the application as soon as it is finished running tests.
 - `--stop-on-error`: The presence of this flag indicates that the test runner should stop running tests when it encounters the first error in any test suite. Without this flag, it will attempt to run all of the test suites.
-- `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`. 
+- `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`.
 - `--coverage`: Required when running tests with the intent to collect coverage in Godot 4. Allows GoDotTest to force-exit so that coverlet picks up on the coverage correctly.
 
 For more information about command line flags, see [`TestEnvironment.cs`](src/TestEnvironment.cs).
 
-## Contributing
+---
 
-For information on contributing, see [CONTRIBUTING.md](CONTRIBUTING.md).
+🐣 Package generated from a 🐤 Chickensoft Template — <https://chickensoft.games>
 
-<!-- Links -->
-
-[chickensoft-badge]: https://chickensoft.games/images/chickensoft/chickensoft_badge.svg
+[chickensoft-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/chickensoft_badge.svg
 [chickensoft-website]: https://chickensoft.games
+[discord-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/discord_badge.svg
 [discord]: https://discord.gg/gSjaPgMmYW
-[line-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/line_coverage.svg
-[branch-coverage]: https://raw.githubusercontent.com/chickensoft-games/go_dot_test/main/test/reports/branch_coverage.svg
-[GoDotTest]: https://www.nuget.org/packages/Chickensoft.GoDotTest/
-[dotnet-path-workaround]: https://github.com/godotengine/godot-proposals/issues/1941#issuecomment-1118648965
-[godot-dotnet-paths]: https://github.com/godotengine/godot/blob/ade4e9320a6ca403b8053fe5828d3f9ce809338c/modules/mono/editor/GodotTools/GodotTools/Build/MsBuildFinder.cs#L122-L130
-[coverlet]: https://github.com/coverlet-coverage/coverlet
-[reportgenerator]: https://github.com/danielpalme/ReportGenerator
-[lcov]: https://github.com/linux-test-project/lcov
-[Shouldly]: https://github.com/shouldly/shouldly
-[Moq]: https://github.com/moq/moq4
-[coverlet-contribution]: https://github.com/coverlet-coverage/coverlet/blob/master/CONTRIBUTING.md
-[GodotTestDriver]: https://github.com/derkork/godot-test-driver
-[collectible assemblies]: https://github.com/godotengine/godot/issues/66060
+[read-the-docs-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/read_the_docs_badge.svg
+[docs]: https://chickensoft.games/docsickensoft%20Discord-%237289DA.svg?style=flat&logo=discord&logoColor=white
+[line-coverage]: Chickensoft.GoDotTest.Tests/badges/line_coverage.svg
+[branch-coverage]: Chickensoft.GoDotTest.Tests/badges/branch_coverage.svg
+
+[GoDotTest]: https://github.com/chickensoft-games/GoDotTest
+[GodotPackage]: https://github.com/chickensoft-games/GodotPackage
+[chickensoft-setup-guide]: https://chickensoft.games/docs/setup
 [LightMoq]: https://github.com/chickensoft-games/LightMoq
-[LightMock.Generator]: https://github.com/anton-yashin/LightMock.Generator
+[TestCoverage]: https://github.com/chickensoft-games/GodotPackage#-test-coverage

@@ -1,23 +1,11 @@
-# Godot-specific ignores
-.import/
-export.cfg
-export_presets.cfg
+Chickensoft.GoDotTest/nupkg/
 
-# Code coverage
-coverage.info
-coverage/
+Chickensoft.GoDotTest.Tests/coverage/*
+!Chickensoft.GoDotTest.Tests/coverage/.gdignore
 
-# Imported translations (automatically generated from CSV files)
-*.translation
-
-# Mono-specific ignores
-data_*/
-.mono/
 .godot/
+bin/
+obj/
 .generated/
-
-# Testing
-test/obj
-test/bin
-
-mono_crash**.json
+.vs/
+.DS_Store
