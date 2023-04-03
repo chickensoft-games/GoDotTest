@@ -322,4 +322,7 @@ For more information about command line flags, see [`TestEnvironment.cs`](src/Te
 [GodotPackage]: https://github.com/chickensoft-games/GodotPackage
 [chickensoft-setup-guide]: https://chickensoft.games/docs/setup
 [LightMoq]: https://github.com/chickensoft-games/LightMoq
+[LightMock.Generator]: https://github.com/anton-yashin/LightMock.Generator
 [TestCoverage]: https://github.com/chickensoft-games/GodotPackage#-test-coverage
+[GodotTestDriver]: https://github.com/derkork/godot-test-driver
+[coverlet]: https://github.com/coverlet-coverage/coverlet
