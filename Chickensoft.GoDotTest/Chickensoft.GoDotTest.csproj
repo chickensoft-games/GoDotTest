@@ -39,9 +39,9 @@
 
   <ItemGroup>
     <!-- Dependencies go here. -->
-    <PackageReference Include="GodotSharp" Version="4.1.0-beta.3" />
+    <PackageReference Include="GodotSharp" Version="4.1.0-rc.1" />
     <PackageReference Include="Chickensoft.GoDotCollections" Version="1.3.4" />
-    <PackageReference Include="Chickensoft.GoDotLog" Version="1.1.5-godot4.1.0-beta.2" />
+    <PackageReference Include="Chickensoft.GoDotLog" Version="1.1.6-godot4.1.0-rc.1" />
 
     <!-- Required for inheritdoc -->
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">
