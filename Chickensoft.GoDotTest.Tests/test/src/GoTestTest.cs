@@ -54,8 +54,10 @@ public class GoTestTest : TestClass {
     var log = new Mock<ILog>();
 
     var provider = new Mock<ITestProvider>();
-    provider.Setup(provider => provider.GetTestSuites(The<Assembly>.IsAnyValue)
-      ).Returns(new List<ITestSuite>());
+    provider
+      .Setup(provider => provider.GetTestSuitesByPattern(
+        The<Assembly>.IsAnyValue, "ahem"
+      )).Returns(new List<ITestSuite>());
 
     var reporter = new Mock<ITestReporter>();
     reporter.Setup(reporter => reporter.HadError).Returns(true);
@@ -92,6 +94,7 @@ public class GoTestTest : TestClass {
       Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
     );
     testExitCode.ShouldBe(1);
+    provider.VerifyAll();
   }
 
   [Test]
@@ -102,8 +105,10 @@ public class GoTestTest : TestClass {
     var log = new Mock<ILog>();
 
     var provider = new Mock<ITestProvider>();
-    provider.Setup(provider => provider.GetTestSuites(The<Assembly>.IsAnyValue)
-      ).Returns(new List<ITestSuite>());
+    provider
+      .Setup(provider => provider.GetTestSuitesByPattern(
+        The<Assembly>.IsAnyValue, "ahem"
+      )).Returns(new List<ITestSuite>());
 
     var reporter = new Mock<ITestReporter>();
     reporter.Setup(reporter => reporter.HadError).Returns(true);
@@ -137,7 +142,7 @@ public class GoTestTest : TestClass {
 
     GoTest.Adapter = adapter.Object;
     await GoTest.RunTests(
-      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object, null
     );
     testExitCode.ShouldBe(1);
   }

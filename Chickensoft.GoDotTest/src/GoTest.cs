@@ -1,6 +1,7 @@
 namespace Chickensoft.GoDotTest;
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
@@ -83,14 +84,18 @@ public class GoTest {
   /// <param name="env">The test environment containing test configuration
   /// settings.</param>
   /// <param name="log">A log for outputting messages.</param>
+  /// <param name="predicate">Function which receives a test suite and returns
+  /// whether the suite should be executed.</param>
   /// <returns>An asynchronous task that completes when the tests have
   /// finished running.</returns>
   public static async Task RunTests(
     Assembly assembly,
     Node sceneRoot,
     ITestEnvironment? env = null,
-    ILog? log = null
+    ILog? log = null,
+    Func<ITestSuite, bool>? predicate = null
   ) {
+    var suiteFilter = predicate ?? (suite => true);
     env = Adapter.CreateTestEnvironment(env);
     log = Adapter.CreateLog(log);
     if (!env.ShouldRunTests) { return; }
@@ -99,6 +104,7 @@ public class GoTest {
     var suites = (pattern == null)
       ? provider.GetTestSuites(assembly)
       : provider.GetTestSuitesByPattern(assembly, pattern);
+    suites = suites.Where(suiteFilter).ToList();
     var reporter = Adapter.CreateReporter(log);
     var methodExecutor = Adapter.CreateMethodExecutor();
     var executor = Adapter.CreateExecutor(

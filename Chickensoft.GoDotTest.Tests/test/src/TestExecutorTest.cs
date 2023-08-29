@@ -37,7 +37,7 @@ public class TestExecutorTest : TestClass {
     // provider would be a real pain, and we know it works or this test
     // wouldn't even be running, so we'll just use one of its static methods.
     // Otherwise, this test would be much more involved.
-    var suite = TestProvider.GetTestSuite(typeof(TestTest));
+    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored));
     suite.ShouldBeAssignableTo<ITestSuite>();
 
     var reporter = new Mock<ITestReporter>();
@@ -51,6 +51,11 @@ public class TestExecutorTest : TestClass {
       "Setup",
       "Test",
       "Cleanup",
+      "Setup",
+      "FailingTest",
+      "Failure",
+      "FailingFailure",
+      "Cleanup",
       "CleanupAll"
     });
   }
@@ -62,7 +67,7 @@ public class TestExecutorTest : TestClass {
     methodExecutor.Setup(
       exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTest2.Test1)
+          method => method.Name == nameof(TestTestIgnored2.Test1)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
@@ -77,7 +82,7 @@ public class TestExecutorTest : TestClass {
 
     var reporter = new Mock<ITestReporter>();
 
-    var suite = TestProvider.GetTestSuite(typeof(TestTest2));
+    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored2));
 
     await testExecutor.Run(
       sceneRoot: TestScene,
@@ -97,7 +102,7 @@ public class TestExecutorTest : TestClass {
     methodExecutor.Setup(
       exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTest3.Test1)
+          method => method.Name == nameof(TestTestIgnored3.Test1)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
@@ -107,7 +112,7 @@ public class TestExecutorTest : TestClass {
     methodExecutor.Setup(
       exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTest3.CleanupAll)
+          method => method.Name == nameof(TestTestIgnored3.CleanupAll)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
@@ -122,7 +127,7 @@ public class TestExecutorTest : TestClass {
 
     var reporter = new Mock<ITestReporter>();
 
-    var suite = TestProvider.GetTestSuite(typeof(TestTest3));
+    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored3));
 
     await testExecutor.Run(
       sceneRoot: TestScene,

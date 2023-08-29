@@ -170,7 +170,26 @@ public class TestExecutor : ITestExecutor {
           suite, method, TestMethodEvent.Failed(exception)
         );
         if (Sequential || suite.Sequential) { skip = true; }
-        Console.WriteLine($"Sequential {Sequential}, suite.Sequential {suite.Sequential}");
+
+        // Run every error handling method on the suite when an error is
+        // encountered.
+        foreach (var failureMethod in suite.FailureMethods) {
+          try {
+            reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
+            await _methodExecutor.Run(
+              failureMethod, instance, TimeoutMilliseconds
+            );
+            reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
+          }
+          catch (Exception failureException) {
+            failureException =
+              failureException.InnerException ?? failureException;
+            reporter.MethodUpdate(
+              suite, method, TestMethodEvent.Failed(failureException)
+            );
+          }
+        }
+
         if (StopOnError) {
           throw new StoppedException(exception);
         }

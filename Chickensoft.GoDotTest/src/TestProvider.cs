@@ -89,14 +89,16 @@ public class TestProvider : ITestProvider {
     var cleanupMethods = GetMethods(classType, typeof(CleanupAttribute));
     var cleanupAllMethods
       = GetMethods(classType, typeof(CleanupAllAttribute));
+    var failureMethods = GetMethods(classType, typeof(FailureAttribute));
     return new TestSuite(
-      classType.GetTypeInfo(),
-      classType,
-      setupMethods,
-      setupAllMethods,
-      testMethods,
-      cleanupMethods,
-      cleanupAllMethods
+      info: classType.GetTypeInfo(),
+      testClassType: classType,
+      setupMethods: setupMethods,
+      setupAllMethods: setupAllMethods,
+      testMethods: testMethods,
+      cleanupMethods: cleanupMethods,
+      cleanupAllMethods: cleanupAllMethods,
+      failureMethods: failureMethods
     );
   }
 
