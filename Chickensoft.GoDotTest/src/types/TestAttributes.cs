@@ -83,6 +83,19 @@ public class CleanupAttribute : TestRunnerMethodAttribute {
 }
 
 /// <summary>
+/// Attribute used to mark a method to be called when a test suite encounters a
+/// failure.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public class FailureAttribute : TestRunnerMethodAttribute {
+  /// <summary>
+  /// Creates a new FailureAttribute with the specified line number.
+  /// </summary>
+  /// <param name="line">Line number.</param>
+  public FailureAttribute([CallerLineNumber] int line = 0) : base(line) { }
+}
+
+/// <summary>
 /// Test method attribute used to customize the timeout duration of a test
 /// method. This overrides any global timeout settings.
 /// </summary>

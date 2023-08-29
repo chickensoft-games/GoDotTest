@@ -33,6 +33,11 @@ public interface ITestSuite {
   /// an error occurs in one of the methods.
   /// </summary>
   public bool Sequential { get; }
+  /// <summary>
+  /// List of methods that are called when the test suite encounters an
+  /// exception.
+  /// </summary>
+  List<ITestMethod> FailureMethods { get; }
 }
 
 /// <summary>
@@ -54,19 +59,21 @@ public class TestSuite : ITestSuite {
   /// <inheritdoc/>
   public List<ITestMethod> CleanupAllMethods { get; }
   /// <inheritdoc/>
+  public List<ITestMethod> FailureMethods { get; }
+  /// <inheritdoc/>
   public bool Sequential { get; }
 
   /// <summary>
   /// Creates a new test suite (test class) representation.
   /// </summary>
-  /// <param name="info"></param>
+  /// <param name="info">TypeInfo for the test class.</param>
   /// <param name="testClassType">Type of the test class.</param>
-  /// <param name="setupMethods"></param>
-  /// <param name="setupAllMethods"></param>
-  /// <param name="testMethods">List of test methods belonging to this
-  /// instance of the test class.</param>
-  /// <param name="cleanupMethods"></param>
-  /// <param name="cleanupAllMethods"></param>
+  /// <param name="setupMethods">Setup methods.</param>
+  /// <param name="setupAllMethods">Setup all methods.</param>
+  /// <param name="testMethods">Test methods.</param>
+  /// <param name="cleanupMethods">Clean up methods.</param>
+  /// <param name="cleanupAllMethods">Cleanup all methods.</param>
+  /// <param name="failureMethods">Failure methods.</param>
   public TestSuite(
     TypeInfo info,
     Type testClassType,
@@ -74,7 +81,8 @@ public class TestSuite : ITestSuite {
     List<ITestMethod> setupAllMethods,
     List<ITestMethod> testMethods,
     List<ITestMethod> cleanupMethods,
-    List<ITestMethod> cleanupAllMethods
+    List<ITestMethod> cleanupAllMethods,
+    List<ITestMethod> failureMethods
   ) {
     Sequential = info.GetCustomAttribute<SequentialAttribute>(false) != null;
     TestClassType = testClassType;
@@ -84,5 +92,6 @@ public class TestSuite : ITestSuite {
     TestMethods = testMethods;
     CleanupMethods = cleanupMethods;
     CleanupAllMethods = cleanupAllMethods;
+    FailureMethods = failureMethods;
   }
 }

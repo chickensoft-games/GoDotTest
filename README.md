@@ -49,12 +49,18 @@ public class ExampleTest : TestClass {
 
   [CleanupAll]
   public void CleanupAll() => _log.Print("Cleanup everything");
+
+  [Failure]
+  public void Failure() =>
+    _log.Print("Runs whenever any of the tests in this suite fail.");
 }
 ```
 
 Tests can leverage lifecycle attributes to perform setup steps and/or cleanup steps. The `[Setup]` attribute is called before each test and the `[Cleanup]` attribute is called after each test.
 
 Likewise, the `[SetupAll]` attribute is called before the first test runs, and the `[CleanupAll]` attribute is called after all the tests have run. Tests are always executed in the order that they are defined in the test class.
+
+Any methods marked with the `Failure` attribute will be run whenever a test in the same suite fails. Failure methods can be used to take screenshots or manage errors in a specific way.
 
 Below is the test execution output GoDoTest shows for its own tests:
 

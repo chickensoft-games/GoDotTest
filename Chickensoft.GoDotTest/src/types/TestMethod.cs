@@ -24,6 +24,9 @@ public enum TestMethodType {
   /// <summary>Cleanup all test method, runs once after all the test
   /// methods in the suite.</summary>
   CleanupAll,
+  /// <summary>Failure method that is run whenever any test in the suite fails.
+  /// </summary>
+  Failure,
 }
 
 /// <summary>
@@ -37,6 +40,7 @@ public static class TestMethodTypes {
       [typeof(TestAttribute)] = TestMethodType.Test,
       [typeof(CleanupAttribute)] = TestMethodType.Cleanup,
       [typeof(CleanupAllAttribute)] = TestMethodType.CleanupAll,
+      [typeof(FailureAttribute)] = TestMethodType.Failure,
     };
 
   /// <summary>

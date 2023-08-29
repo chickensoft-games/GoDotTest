@@ -458,3 +458,5 @@ dotnet_diagnostic.RCS1165.severity = none
 dotnet_diagnostic.CA1716.severity = none
 # Allow exceptions without the standard exception constructors.
 dotnet_diagnostic.RCS1194.severity = none
+# Primary constructors aren't supported in net6.0, despite it wanting them.
+dotnet_diagnostic.IDE0290.severity = none
