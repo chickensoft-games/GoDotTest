@@ -320,7 +320,7 @@ For more information about command line flags, see [`TestEnvironment.cs`](src/Te
 [discord-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/discord_badge.svg
 [discord]: https://discord.gg/gSjaPgMmYW
 [read-the-docs-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/read_the_docs_badge.svg
-[docs]: https://chickensoft.games/docsickensoft%20Discord-%237289DA.svg?style=flat&logo=discord&logoColor=white
+[docs]: https://chickensoft.games/docs
 [line-coverage]: Chickensoft.GoDotTest.Tests/badges/line_coverage.svg
 [branch-coverage]: Chickensoft.GoDotTest.Tests/badges/branch_coverage.svg
 
