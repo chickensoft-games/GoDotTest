@@ -1,7 +1,6 @@
-using JetBrains.Annotations;
-
 namespace Chickensoft.GoDotTest;
 
+using JetBrains.Annotations;
 using System;
 using System.Runtime.CompilerServices;
 
