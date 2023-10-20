@@ -1,9 +1,10 @@
 namespace Chickensoft.GoDotTest;
 
+using JetBrains.Annotations;
 using System;
 using System.Runtime.CompilerServices;
 
-[AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.All, AllowMultiple = false), MeansImplicitUse]
 
 /// <summary>Base class for test method attributes.</summary>
 public abstract class TestRunnerMethodAttribute : Attribute {
