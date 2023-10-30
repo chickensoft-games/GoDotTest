@@ -42,7 +42,7 @@
     <PackageReference Include="GodotSharp" Version="4.2.0-beta.3" />
     <PackageReference Include="Chickensoft.GoDotCollections" Version="1.4.0" />
     <PackageReference Include="Chickensoft.GoDotLog" Version="1.1.12-godot4.2.0-beta.2" />
-    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0-eap3" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0-eap4" />
 
     <!-- Required for inheritdoc -->
     <PackageReference Include="SauceControl.InheritDoc" Version="1.3.0">
