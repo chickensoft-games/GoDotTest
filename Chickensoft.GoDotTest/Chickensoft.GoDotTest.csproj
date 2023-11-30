@@ -41,7 +41,7 @@
     <!-- Dependencies go here. -->
     <PackageReference Include="GodotSharp" Version="4.2.0" />
     <PackageReference Include="Chickensoft.GoDotCollections" Version="1.4.0" />
-    <PackageReference Include="Chickensoft.GoDotLog" Version="1.1.14-godot4.2.0-rc.2" />
+    <PackageReference Include="Chickensoft.GoDotLog" Version="1.1.15" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
 
     <!-- Required for inheritdoc -->
