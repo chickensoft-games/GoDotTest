@@ -210,7 +210,9 @@ using GoDotTest;
 #endif
 
 public partial class Main : Node2D {
+#if DEBUG
   public TestEnvironment Environment = default!;
+#endif
 
   public override void _Ready() {
 #if DEBUG
@@ -226,8 +228,10 @@ public partial class Main : Node2D {
     GetTree().ChangeSceneToFile("res://src/Game.tscn");
   }
 
+#if DEBUG
   private void RunTests()
     => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this, Environment);
+#endif
 }
 ```
 
