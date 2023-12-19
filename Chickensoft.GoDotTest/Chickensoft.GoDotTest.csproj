@@ -45,7 +45,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
 
     <!-- Required for inheritdoc -->
-    <PackageReference Include="SauceControl.InheritDoc" Version="1.4.0">
+    <PackageReference Include="SauceControl.InheritDoc" Version="2.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
