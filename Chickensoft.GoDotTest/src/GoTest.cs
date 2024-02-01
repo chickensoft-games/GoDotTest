@@ -42,6 +42,10 @@ public class GoTest {
   /// system itself.
   /// </summary>
   public static ITestAdapter Adapter { get; set; } = DefaultAdapter;
+  /// <summary>
+  /// Timeout for each Test, Setup and SetupAll
+  /// </summary>
+  public static int TimeoutMilliseconds { get; set; } = 10000;
 
   /// <summary>Default action to perform for exiting.</summary>
   public static Action<Node, int> DefaultOnExit { get; }
@@ -111,7 +115,7 @@ public class GoTest {
       methodExecutor: methodExecutor,
       stopOnError: env.StopOnError,
       sequential: env.Sequential,
-      timeoutMilliseconds: 10000
+      timeoutMilliseconds: TimeoutMilliseconds
     );
     await executor.Run(sceneRoot, suites, reporter);
     if (env.QuitOnFinish) {

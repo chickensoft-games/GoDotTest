@@ -52,44 +52,13 @@ public class GoTestTest : TestClass {
       new string[] { "--run-tests=ahem", "--quit-on-finish" }
     );
     var log = new Mock<ILog>();
-
     var provider = new Mock<ITestProvider>();
-    provider
-      .Setup(provider => provider.GetTestSuitesByPattern(
-        The<Assembly>.IsAnyValue, "ahem"
-      )).Returns(new List<ITestSuite>());
 
-    var reporter = new Mock<ITestReporter>();
-    reporter.Setup(reporter => reporter.HadError).Returns(true);
-
-    var executor = new Mock<ITestExecutor>();
-    executor.Setup(
-      executor => executor.Run(
-        TestScene, The<List<ITestSuite>>.IsAnyValue, reporter.Object
-      )
-    ).Returns(Task.CompletedTask);
-
-    var adapter = new Mock<ITestAdapter>();
-    adapter.Setup(adapter => adapter.CreateTestEnvironment(testEnv))
-      .Returns(testEnv);
-    adapter.Setup(adapter => adapter.CreateLog(log.Object)).Returns(log.Object);
-    adapter.Setup(
-      adapter => adapter.CreateProvider()
-    ).Returns(provider.Object);
-    adapter.Setup(
-      adapter => adapter.CreateReporter(log.Object)
-    ).Returns(reporter.Object);
-    adapter.Setup(adapter => adapter.CreateExecutor(
-      The<ITestMethodExecutor>.IsAnyValue,
-      The<bool>.IsAnyValue,
-      The<bool>.IsAnyValue,
-      The<int>.IsAnyValue
-    )).Returns(executor.Object);
+    SetupTest(testEnv, log, provider);
 
     int? testExitCode = null;
     GoTest.OnExit = (node, exitCode) => testExitCode = exitCode;
 
-    GoTest.Adapter = adapter.Object;
     await GoTest.RunTests(
       Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
     );
@@ -103,12 +72,43 @@ public class GoTestTest : TestClass {
       new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
     );
     var log = new Mock<ILog>();
-
     var provider = new Mock<ITestProvider>();
+
+    SetupTest(testEnv, log, provider);
+
+    int? testExitCode = null;
+    GoTest.OnForceExit = (node, exitCode) => testExitCode = exitCode;
+
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object, null
+    );
+    testExitCode.ShouldBe(1);
+  }
+
+  [Test]
+  public async Task TimeoutMillisecondSetterShouldHaveAnImpactWhenCreatingExecutor() {
+    var testEnv = TestEnvironment.From(
+      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+    );
+    var log = new Mock<ILog>();
+    var provider = new Mock<ITestProvider>();
+    var timeoutMilliseconds = 123456;
+
+    GoTest.TimeoutMilliseconds = timeoutMilliseconds;
+    SetupTest(testEnv, log, provider, timeoutMilliseconds);
+
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object, null
+    );
+
+    GoTest.TimeoutMilliseconds = 10000;
+  }
+
+  private void SetupTest(TestEnvironment testEnv, Mock<ILog> log, Mock<ITestProvider> provider, int expectedTimeout = 10000) {
     provider
-      .Setup(provider => provider.GetTestSuitesByPattern(
-        The<Assembly>.IsAnyValue, "ahem"
-      )).Returns(new List<ITestSuite>());
+          .Setup(provider => provider.GetTestSuitesByPattern(
+            The<Assembly>.IsAnyValue, "ahem"
+          )).Returns(new List<ITestSuite>());
 
     var reporter = new Mock<ITestReporter>();
     reporter.Setup(reporter => reporter.HadError).Returns(true);
@@ -134,17 +134,10 @@ public class GoTestTest : TestClass {
       The<ITestMethodExecutor>.IsAnyValue,
       The<bool>.IsAnyValue,
       The<bool>.IsAnyValue,
-      The<int>.IsAnyValue
+      expectedTimeout
     )).Returns(executor.Object);
 
-    int? testExitCode = null;
-    GoTest.OnForceExit = (node, exitCode) => testExitCode = exitCode;
-
     GoTest.Adapter = adapter.Object;
-    await GoTest.RunTests(
-      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object, null
-    );
-    testExitCode.ShouldBe(1);
   }
 
   /// <summary>
