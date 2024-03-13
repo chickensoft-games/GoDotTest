@@ -1,9 +1,9 @@
 {
   "sdk": {
-    "version": "9.0.100-preview.1.24101.2",
+    "version": "9.0.100-preview.2.24157.14",
     "rollForward": "latestMinor"
   },
   "msbuild-sdks": {
-    "Godot.NET.Sdk": "4.2.2-rc.1"
+    "Godot.NET.Sdk": "4.2.2-rc.2"
   }
 }
