@@ -266,7 +266,7 @@ GoDotTest is only a test provider and test execution system. Keeping the scope o
 
 For mocking, we recommend [LightMock.Generator]. It is similar in usage to the popular `Moq` library, but generates mocks at compile-time ensuring maximum compatibility in any .NET environment. To make LightMock's API even more closely resemble Moq's, you can use Chickensoft's [LightMoq] adapter.
 
-For integration tests, we recommend [GodotTestDriver]. GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
+For integration tests, we recommend [GodotTestDriver](https://github.com/chickensoft-games/GodotTestDriver). GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
 
 ## Coverage
 
