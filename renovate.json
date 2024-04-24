@@ -17,6 +17,12 @@
     },
     {
       "matchPackagePrefixes": [
+        "dotnet-sdk"
+      ],
+      "allowedVersions": "!/preview/"
+    },
+    {
+      "matchPackagePrefixes": [
         "GodotSharp",
         "Godot.NET.Sdk"
       ],
