@@ -12,7 +12,7 @@
     <DebugType>portable</DebugType>
 
     <Title>Chickensoft.GoDotTest</Title>
-    <Version>1.5.3</Version>
+    <Version>1.5.4-godot4.3.0-beta.1</Version>
     <Description>C# test runner for Godot. Run tests from the command line, collect code coverage, and debug tests in VSCode.
     </Description>
     <Copyright>© 2023 Chickensoft</Copyright>
