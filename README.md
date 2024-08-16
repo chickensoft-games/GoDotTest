@@ -27,8 +27,9 @@ Add the latest version of GoDotTest to your `*.csproj` file. Make sure to replac
 The example below shows how unit tests are written. Each test extends the provided `TestClass` and receives the test scene as a constructor argument which is passed to the base class. The test scene can be used by tests to create nodes and add them to the scene tree.
 
 ```csharp
+using Chickensoft.GoDotLog;
+using Chickensoft.GoDotTest;
 using Godot;
-using GoDotTest;
 
 public class ExampleTest : TestClass {
   private readonly ILog _log = new GDLog(nameof(ExampleTest));
