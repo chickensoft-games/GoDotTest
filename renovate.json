@@ -5,7 +5,6 @@
     ":semanticCommits"
   ],
   "prHourlyLimit": 2,
-  "versioning": "loose",
   "packageRules": [
     {
       "matchPackagePatterns": [
@@ -18,15 +17,13 @@
     {
       "matchPackagePrefixes": [
         "dotnet-sdk"
-      ],
-      "allowedVersions": "!/preview/"
+      ]
     },
     {
       "matchPackagePrefixes": [
         "GodotSharp",
         "Godot.NET.Sdk"
-      ],
-      "allowedVersions": "/^(\\d+\\.\\d+\\.\\d+)(-(beta|rc)\\.(\\d+)(\\.\\d+)*)?$/"
+      ]
     },
     {
       "matchPackagePrefixes": [
