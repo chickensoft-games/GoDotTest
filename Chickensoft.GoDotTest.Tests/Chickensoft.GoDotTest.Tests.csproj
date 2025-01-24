@@ -21,7 +21,7 @@
   <ItemGroup>
     <!-- Bring your own assertion library for tests! -->
     <!-- We're using Shouldly for this example, but you can use anything. -->
-    <PackageReference Include="Shouldly" Version="4.2.1" />
+    <PackageReference Include="Shouldly" Version="4.3.0" />
     <!-- LightMock is a mocking library that can run without reflection. -->
     <PackageReference Include="LightMock.Generator" Version="1.2.2" />
     <!-- LightMoq is a Chickensoft package which makes it more like Moq. -->
