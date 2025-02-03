@@ -106,7 +106,7 @@ public class GoTest {
       env = Adapter.CreateTestEnvironment(env);
       log = Adapter.CreateLog(log);
       if (!env.ShouldRunTests) { return; }
-      if (!env.SuppressTrace) {
+      if (env.ListenTrace) {
         Trace.Listeners.Add(traceListener);
       }
       var provider = Adapter.CreateProvider();

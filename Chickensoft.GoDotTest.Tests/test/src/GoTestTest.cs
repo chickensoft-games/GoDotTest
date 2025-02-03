@@ -2,6 +2,8 @@ namespace Chickensoft.GoDotTest.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Chickensoft.Log;
@@ -33,6 +35,8 @@ public class TestTestAdapter : TestAdapter {
   }
 }
 
+[SuppressMessage("Performance", "CA1861: Prefer static readonly fields",
+  Justification = "Environment arguments change not detected by analyzer")]
 public class GoTestTest : TestClass {
   public GoTestTest(Node testScene) : base(testScene) { }
 
@@ -64,6 +68,32 @@ public class GoTestTest : TestClass {
     );
     testExitCode.ShouldBe(1);
     provider.VerifyAll();
+  }
+
+  [Test]
+  public async Task RemovesTraceListenerWhenTestsFail() {
+    // will be 1 in VSCode, 2 in VS (it adds its own DefaultTraceListener
+    // to run these tests)
+    var traceListenerCount = Trace.Listeners.Count;
+    var testEnv = TestEnvironment.From(
+      new string[] {
+        "--run-tests=ahem",
+        "--listen-trace",
+         "--quit-on-finish"
+      }
+    );
+    var log = new Mock<ILog>();
+    var provider = new Mock<ITestProvider>();
+
+    SetupTest(testEnv, log, provider);
+
+    int? testExitCode = null;
+    GoTest.OnExit = (node, exitCode) => testExitCode = exitCode;
+
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
+    );
+    Trace.Listeners.Count.ShouldBe(traceListenerCount);
   }
 
   [Test]

@@ -21,14 +21,14 @@ public class TestEnvironmentTest : TestClass {
   public void ConstructsTestEnvironmentWithSimpleFlags() {
     var args = new string[] {
       "--quit-on-finish",
-      "--suppress-trace",
+      "--listen-trace",
       "--stop-on-error",
       "--sequential",
       "--coverage",
     };
     var testEnvironment = TestEnvironment.From(args);
     testEnvironment.QuitOnFinish.ShouldBeTrue();
-    testEnvironment.SuppressTrace.ShouldBeTrue();
+    testEnvironment.ListenTrace.ShouldBeTrue();
     testEnvironment.StopOnError.ShouldBeTrue();
     testEnvironment.Sequential.ShouldBeTrue();
     testEnvironment.Coverage.ShouldBeTrue();

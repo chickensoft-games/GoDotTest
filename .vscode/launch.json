@@ -14,8 +14,6 @@
       "args": [
         // These command line flags are used by GoDotTest to run tests.
         "--run-tests",
-        // VS needs an additional trace listener, VSCode doesn't
-        "--suppress-trace",
         "--quit-on-finish"
       ],
       "cwd": "${workspaceFolder}/Chickensoft.GoDotTest.Tests",
