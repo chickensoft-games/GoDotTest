@@ -1,8 +1,8 @@
 namespace Chickensoft.GoDotTest.Tests;
 
 using System;
+using Chickensoft.Log;
 using Godot;
-using GoDotLog;
 using GoDotTest;
 using LightMock.Generator;
 using LightMoq;
@@ -25,7 +25,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")
+      static log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")
     );
 
     reporter.MethodUpdate(
@@ -71,7 +71,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> ^^ >> TestSuite::Method [Test] > Test started! :3")
+      static log => log.Print("> ^^ >> TestSuite::Method [Test] > Test started! :3")
     );
 
     reporter.MethodUpdate(
@@ -90,7 +90,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> !! >> TestSuite::Method [Cleanup] > Test failed! :(")
+      static log => log.Print("> !! >> TestSuite::Method [Cleanup] > Test failed! :(")
     );
 
     reporter.MethodUpdate(
@@ -111,7 +111,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> ^^ >> TestSuite::Method [Test] > Test skipped! :|")
+      static log => log.Print("> ^^ >> TestSuite::Method [Test] > Test skipped! :|")
     );
 
     reporter.MethodUpdate(
@@ -129,7 +129,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> ^^ >> TestSuite > Test suite started! :3")
+      static log => log.Print("> ^^ >> TestSuite > Test suite started! :3")
     );
 
     reporter.SuiteUpdate(suite.Object, TestSuiteEvent.Started);
@@ -145,7 +145,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> OK >> TestSuite > Test suite finished! :D")
+      static log => log.Print("> OK >> TestSuite > Test suite finished! :D")
     );
 
     reporter.SuiteUpdate(suite.Object, TestSuiteEvent.Finished);
@@ -161,7 +161,7 @@ public class TestReporterTest : TestClass {
     var suite = CreateSuite();
 
     log.Setup(
-      log => log.Print("> !! >> TestSuite > Test suite error. Aborting! :(")
+      static log => log.Print("> !! >> TestSuite > Test suite error. Aborting! :(")
     );
 
     reporter.SuiteUpdate(suite.Object, TestSuiteEvent.ErrorEncountered);
@@ -174,7 +174,7 @@ public class TestReporterTest : TestClass {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
-    log.Setup(log => log.Print("> ^^ >> Started testing! :3"));
+    log.Setup(static log => log.Print("> ^^ >> Started testing! :3"));
     reporter.Update(TestEvent.Started);
     log.VerifyAll();
   }
@@ -184,7 +184,7 @@ public class TestReporterTest : TestClass {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
-    log.Setup(log => log.Print("> OK >> Finished testing! :D"));
+    log.Setup(static log => log.Print("> OK >> Finished testing! :D"));
     reporter.Update(TestEvent.Finished);
     log.VerifyAll();
   }
@@ -225,10 +225,10 @@ public class TestReporterTest : TestClass {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
     log.Setup(
-      log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")
+      static log => log.Print("> OK >> TestSuite::Method [Test] > Test passed! :)")
     );
-    log.Setup(log => log.Print("> OK >> Finished testing! :D"));
-    log.Setup(log => log.Print(
+    log.Setup(static log => log.Print("> OK >> Finished testing! :D"));
+    log.Setup(static log => log.Print(
       "> OK >> Test results: Passed: 1 | Failed: 0 | Skipped: 0"
     ));
     var suite = CreateSuite();
@@ -245,7 +245,7 @@ public class TestReporterTest : TestClass {
 
   private static Mock<ITestSuite> CreateSuite(string name = "TestSuite") {
     var suite = new Mock<ITestSuite>();
-    suite.Setup(suite => suite.Name).Returns(name);
+    suite.Setup(static suite => suite.Name).Returns(name);
     return suite;
   }
 
@@ -253,8 +253,8 @@ public class TestReporterTest : TestClass {
     TestMethodType type, string name = "Method"
   ) {
     var method = new Mock<ITestMethod>();
-    method.Setup(method => method.Type).Returns(type);
-    method.Setup(method => method.Name).Returns(name);
+    method.Setup(static method => method.Type).Returns(type);
+    method.Setup(static method => method.Name).Returns(name);
     return method;
   }
 }

@@ -7,11 +7,13 @@ using Shouldly;
 public class TestEnvironmentTest : TestClass {
   public TestEnvironmentTest(Node testScene) : base(testScene) { }
 
+  private static readonly string[] _commandLineArgs = new string[] {
+      "--run-tests=SomeTest"
+    };
+
   [Test]
   public void ConstructsTestEnvironmentWithPatternFlag() {
-    var testEnvironment = TestEnvironment.From(new string[] {
-      "--run-tests=SomeTest"
-    });
+    var testEnvironment = TestEnvironment.From(_commandLineArgs);
     testEnvironment.TestPatternToRun.ShouldBe("SomeTest");
   }
 
@@ -19,12 +21,14 @@ public class TestEnvironmentTest : TestClass {
   public void ConstructsTestEnvironmentWithSimpleFlags() {
     var args = new string[] {
       "--quit-on-finish",
-       "--stop-on-error",
-       "--sequential",
-       "--coverage",
+      "--suppress-trace",
+      "--stop-on-error",
+      "--sequential",
+      "--coverage",
     };
     var testEnvironment = TestEnvironment.From(args);
     testEnvironment.QuitOnFinish.ShouldBeTrue();
+    testEnvironment.SuppressTrace.ShouldBeTrue();
     testEnvironment.StopOnError.ShouldBeTrue();
     testEnvironment.Sequential.ShouldBeTrue();
     testEnvironment.Coverage.ShouldBeTrue();

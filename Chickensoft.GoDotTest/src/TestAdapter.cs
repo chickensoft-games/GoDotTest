@@ -1,7 +1,7 @@
 namespace Chickensoft.GoDotTest;
 
+using Chickensoft.Log;
 using Godot;
-using GoDotLog;
 
 /// <summary>
 /// Represents an object which constructs classes needed for testing.
@@ -65,7 +65,7 @@ public interface ITestAdapter {
 /// </summary>
 public class TestAdapter : ITestAdapter {
   /// <inheritdoc/>
-  public ILog CreateLog(ILog? log) => log ?? new GDLog(nameof(GoTest));
+  public ILog CreateLog(ILog? log) => log ?? new Log(nameof(GoTest), new TraceWriter());
   /// <inheritdoc/>
   public ITestEnvironment CreateTestEnvironment(ITestEnvironment? env)
     => env ?? TestEnvironment.From(OS.GetCmdlineArgs());
