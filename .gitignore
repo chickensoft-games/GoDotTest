@@ -3,8 +3,6 @@ Chickensoft.GoDotTest/nupkg/
 Chickensoft.GoDotTest.Tests/coverage/*
 !Chickensoft.GoDotTest.Tests/coverage/.gdignore
 
-*launchSettings.json
-
 .godot/
 bin/
 obj/
