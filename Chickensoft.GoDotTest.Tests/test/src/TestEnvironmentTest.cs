@@ -7,13 +7,11 @@ using Shouldly;
 public class TestEnvironmentTest : TestClass {
   public TestEnvironmentTest(Node testScene) : base(testScene) { }
 
-  private static readonly string[] _commandLineArgs = new string[] {
-      "--run-tests=SomeTest"
-    };
-
   [Test]
   public void ConstructsTestEnvironmentWithPatternFlag() {
-    var testEnvironment = TestEnvironment.From(_commandLineArgs);
+    var testEnvironment = TestEnvironment.From([
+      "--run-tests=SomeTest"
+    ]);
     testEnvironment.TestPatternToRun.ShouldBe("SomeTest");
   }
 

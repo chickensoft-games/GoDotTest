@@ -17,7 +17,7 @@ public class TestExecutorTest : TestClass {
 
   // Test data shared between TestTest and ourselves.
 
-  public static readonly List<string> Called = new();
+  public static readonly List<string> Called = [];
 
   [Test]
   public async Task RunsASingleTestSuiteForReal() {
@@ -43,10 +43,10 @@ public class TestExecutorTest : TestClass {
     var reporter = new Mock<ITestReporter>();
 
     await testExecutor.Run(
-      TestScene, new List<ITestSuite>() { suite }, reporter.Object
+      TestScene, [suite], reporter.Object
     );
 
-    Called.ShouldBe(new List<string>() {
+    Called.ShouldBe([
       "SetupAll",
       "Setup",
       "Test",
@@ -57,7 +57,7 @@ public class TestExecutorTest : TestClass {
       "FailingFailure",
       "Cleanup",
       "CleanupAll"
-    });
+    ]);
   }
 
   [Test]
@@ -65,14 +65,14 @@ public class TestExecutorTest : TestClass {
     var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
-      exe => exe.Run(
+      static exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTestIgnored2.Test1)
+          static method => method.Name == nameof(TestTestIgnored2.Test1)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
       )
-    ).Throws(() => new InvalidOperationException("Ahem"));
+    ).Throws(static () => new InvalidOperationException("Ahem"));
 
     var testExecutor = new TestExecutor(
       methodExecutor: methodExecutor.Object,
@@ -86,9 +86,7 @@ public class TestExecutorTest : TestClass {
 
     await testExecutor.Run(
       sceneRoot: TestScene,
-      suites: new List<ITestSuite>() {
-        suite
-      },
+      suites: [suite],
       reporter: reporter.Object
     );
 
@@ -100,19 +98,19 @@ public class TestExecutorTest : TestClass {
     var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
-      exe => exe.Run(
+      static exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTestIgnored3.Test1)
+          static method => method.Name == nameof(TestTestIgnored3.Test1)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
       )
-    ).Throws(() => new InvalidOperationException("Ahem"));
+    ).Throws(static () => new InvalidOperationException("Ahem"));
 
     methodExecutor.Setup(
-      exe => exe.Run(
+      static exe => exe.Run(
         The<ITestMethod>.Is(
-          method => method.Name == nameof(TestTestIgnored3.CleanupAll)
+          static method => method.Name == nameof(TestTestIgnored3.CleanupAll)
         ),
         The<TestClass>.IsAnyValue,
         The<int>.IsAnyValue
@@ -131,9 +129,9 @@ public class TestExecutorTest : TestClass {
 
     await testExecutor.Run(
       sceneRoot: TestScene,
-      suites: new List<ITestSuite>() {
+      suites: [
         suite
-      },
+      ],
       reporter: reporter.Object
     );
   }

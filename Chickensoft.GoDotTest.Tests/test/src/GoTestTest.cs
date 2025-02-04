@@ -3,7 +3,6 @@ namespace Chickensoft.GoDotTest.Tests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Chickensoft.Log;
@@ -35,8 +34,6 @@ public class TestTestAdapter : TestAdapter {
   }
 }
 
-[SuppressMessage("Performance", "CA1861: Prefer static readonly fields",
-  Justification = "Environment arguments change not detected by analyzer")]
 public class GoTestTest : TestClass {
   public GoTestTest(Node testScene) : base(testScene) { }
 
@@ -44,7 +41,7 @@ public class GoTestTest : TestClass {
   public async Task DoesNothingIfNotRunningTests() {
     var adapter = new Mock<TestAdapter>();
     GoTest.Adapter = adapter.Object;
-    var testEnv = TestEnvironment.From(Array.Empty<string>());
+    var testEnv = TestEnvironment.From([]);
     var log = new Mock<ILog>();
     var assembly = Assembly.GetExecutingAssembly();
     await GoTest.RunTests(assembly, TestScene, testEnv, log.Object);
@@ -53,7 +50,7 @@ public class GoTestTest : TestClass {
   [Test]
   public async Task ExitsWithFailingExitCodeWhenTestsFail() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--quit-on-finish" }
+      ["--run-tests=ahem", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -76,11 +73,11 @@ public class GoTestTest : TestClass {
     // to run these tests)
     var traceListenerCount = Trace.Listeners.Count;
     var testEnv = TestEnvironment.From(
-      new string[] {
+      [
         "--run-tests=ahem",
         "--listen-trace",
          "--quit-on-finish"
-      }
+      ]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -99,7 +96,7 @@ public class GoTestTest : TestClass {
   [Test]
   public async Task ExitsWithFailingExitCodeWhenTestsFailOnCoverage() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+      ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -118,7 +115,7 @@ public class GoTestTest : TestClass {
   [Test]
   public async Task TimeoutMillisecondSetterShouldHaveAnImpactWhenCreatingExecutor() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+      ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -138,7 +135,7 @@ public class GoTestTest : TestClass {
     provider
           .Setup(provider => provider.GetTestSuitesByPattern(
             The<Assembly>.IsAnyValue, "ahem"
-          )).Returns(new List<ITestSuite>());
+          )).Returns([]);
 
     var reporter = new Mock<ITestReporter>();
     reporter.Setup(reporter => reporter.HadError).Returns(true);

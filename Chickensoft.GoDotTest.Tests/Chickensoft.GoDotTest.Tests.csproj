@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>Chickensoft.GoDotTest.Tests</RootNamespace>
     <!-- Required for some nuget packages to work -->
