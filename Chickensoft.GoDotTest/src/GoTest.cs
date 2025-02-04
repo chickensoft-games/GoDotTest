@@ -1,7 +1,6 @@
 namespace Chickensoft.GoDotTest;
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -100,38 +99,30 @@ public class GoTest {
     ILog? log = null,
     Func<ITestSuite, bool>? predicate = null
   ) {
-    var traceListener = new DefaultTraceListener();
-    try {
-      var suiteFilter = predicate ?? (static suite => true);
-      env = Adapter.CreateTestEnvironment(env);
-      log = Adapter.CreateLog(log);
-      if (!env.ShouldRunTests) { return; }
-      if (env.ListenTrace) {
-        Trace.Listeners.Add(traceListener);
-      }
-      var provider = Adapter.CreateProvider();
-      var pattern = env.TestPatternToRun;
-      var suites = (pattern == null)
-        ? provider.GetTestSuites(assembly)
-        : provider.GetTestSuitesByPattern(assembly, pattern);
-      suites = suites.Where(suiteFilter).ToList();
-      var reporter = Adapter.CreateReporter(log);
-      var methodExecutor = Adapter.CreateMethodExecutor();
-      var executor = Adapter.CreateExecutor(
-        methodExecutor: methodExecutor,
-        stopOnError: env.StopOnError,
-        sequential: env.Sequential,
-        timeoutMilliseconds: TimeoutMilliseconds
-      );
-      await executor.Run(sceneRoot, suites, reporter);
-      if (env.QuitOnFinish) {
-        var exitCode = reporter.HadError ? 1 : 0;
-        var exitFn = env.Coverage ? OnForceExit : OnExit;
-        exitFn(sceneRoot, exitCode);
-      }
-    }
-    finally {
-      Trace.Listeners.Remove(traceListener);
+    var suiteFilter = predicate ?? (static suite => true);
+    env = Adapter.CreateTestEnvironment(env);
+    log = Adapter.CreateLog(log);
+    if (!env.ShouldRunTests) { return; }
+    using var listenerManager = new TraceListenerManager(env);
+    var provider = Adapter.CreateProvider();
+    var pattern = env.TestPatternToRun;
+    var suites = (pattern == null)
+      ? provider.GetTestSuites(assembly)
+      : provider.GetTestSuitesByPattern(assembly, pattern);
+    suites = suites.Where(suiteFilter).ToList();
+    var reporter = Adapter.CreateReporter(log);
+    var methodExecutor = Adapter.CreateMethodExecutor();
+    var executor = Adapter.CreateExecutor(
+      methodExecutor: methodExecutor,
+      stopOnError: env.StopOnError,
+      sequential: env.Sequential,
+      timeoutMilliseconds: TimeoutMilliseconds
+    );
+    await executor.Run(sceneRoot, suites, reporter);
+    if (env.QuitOnFinish) {
+      var exitCode = reporter.HadError ? 1 : 0;
+      var exitFn = env.Coverage ? OnForceExit : OnExit;
+      exitFn(sceneRoot, exitCode);
     }
   }
 }
