@@ -119,7 +119,7 @@ public record TestEnvironment(
   /// coverage.
   /// </summary>
   public const string COVERAGE_FLAG = "--coverage";
-  /// <summary>Default value for suppress trace.</summary>
+  /// <summary>Default value for listen-trace.</summary>
   public const bool DEFAULT_LISTEN_TRACE = false;
   /// <summary>Default value for quit on finish.</summary>
   public const bool DEFAULT_QUIT_ON_FINISH = false;
