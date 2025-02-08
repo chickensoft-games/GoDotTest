@@ -73,7 +73,7 @@ You can debug tests in Godot from Visual Studio Code. To do this, you will need 
 
 See the [Chickensoft Setup Guide][chickensoft-setup-guide] for more information about setting up your development environment for use with Godot and GoDotTest.
 
-## Debugging
+## Debugging (Visual Studio Code)
 
 The following `launch.json` file provides launch configurations to debug the game, debug all the tests, or debug the currently open test in Visual Studio Code. To debug the currently open test, make sure the class name of the test matches the file name, as is typical in C#.
 
@@ -160,6 +160,27 @@ Place the following `tasks.json` and `launch.json` inside a folder named `.vscod
   ]
 }
 ```
+
+## Debugging (Visual Studio)
+
+To debug your tests from Visual Studio, place the following `launchSettings.json` file in the `Properties` subdirectory of your test project:
+
+```json
+{
+  "profiles": {
+    "Debug Tests": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT4%",
+      "commandLineArgs": "--run-tests --listen-trace --quit-on-finish",
+      "workingDirectory": "."
+    }
+  }
+}
+```
+
+Alternatively, [edit the launch profiles for your test project](https://learn.microsoft.com/en-us/visualstudio/debugger/project-settings-for-csharp-debug-configurations-dotnetcore?view=vs-2022) in Visual Studio. Add an executable profile with these settings:
+
+![vs launch config](docs/vs_launch_config.png)
 
 ## Testing a Scene
 
@@ -309,6 +330,7 @@ If you need to customize how tests are loaded and run, you can use the code in [
 ## Command Line Arguments
 
 - `--run-tests`: The presence of this flag informs your game that tests should be run. If you've setup your main scene to redirect to the test scene when it finds this flag (as described above), you can use pass this flag in when running Godot from the command line (for debugging or CI/CD purposes) to run your test(s).
+- `--listen-trace`: Test output is sent to the console via Godot's capture of .NET `Trace` messages. In the Godot editor and VS Code, test output is visible through redirection of the console to a pane in the editor. However, Visual Studio does not redirect console output to its Output pane while running or debugging programs. This flag indicates that Visual Studio output should be supported by adding a `DefaultTraceListener` to the global list of trace listeners. (Using this flag in VS Code, however, will result in doubled output, as it will capture both the `DefaultTraceListener` output and the console output.)
 - `--quit-on-finish`: The presence of this flag indicates that the test runner should exit the application as soon as it is finished running tests.
 - `--stop-on-error`: The presence of this flag indicates that the test runner should stop running tests when it encounters the first error in any test suite. Without this flag, it will attempt to run all of the test suites.
 - `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`.

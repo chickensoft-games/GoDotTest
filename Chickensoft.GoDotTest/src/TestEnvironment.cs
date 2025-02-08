@@ -14,6 +14,13 @@ public interface ITestEnvironment {
   /// </summary>
   bool ShouldRunTests { get; }
   /// <summary>
+  /// Set to true to instruct the application to add a
+  /// <c>System.Diagnostics.DefaultTraceListener</c> to the system's list of
+  /// Trace listeners. Echoes output to Visual Studio's Output pane, but
+  /// causes doubled output in VSCode.
+  /// </summary>
+  bool ListenTrace { get; }
+  /// <summary>
   /// Set to true if the test runner should quit godot after the
   /// tests have finished running.
   /// </summary>
@@ -59,6 +66,9 @@ public interface ITestEnvironment {
 /// <param name="ShouldRunTests">
 /// <inheritdoc cref="ITestEnvironment.ShouldRunTests" path="/summary"/>
 /// </param>
+/// <param name="ListenTrace">
+/// <inheritdoc cref="ITestEnvironment.ListenTrace" path="/summary"/>
+/// </param>
 /// <param name="QuitOnFinish">
 /// <inheritdoc cref="ITestEnvironment.QuitOnFinish" path="/summary"/>
 /// </param>
@@ -79,6 +89,7 @@ public interface ITestEnvironment {
 /// </param>
 public record TestEnvironment(
   bool ShouldRunTests,
+  bool ListenTrace,
   bool QuitOnFinish,
   bool StopOnError,
   bool Sequential,
@@ -88,6 +99,12 @@ public record TestEnvironment(
 ) : ITestEnvironment {
   /// <summary>Flag which indicates tests should be run.</summary>
   public const string TEST_FLAG = "--run-tests";
+  /// <summary>Flag which indicates the environment will capture trace
+  /// output with a <c>System.Diagnostics.DefaultTraceListener</c>,
+  /// which will echo output to Visual Studio's Output pane but causes
+  /// doubled output in VSCode.
+  /// </summary>
+  public const string LISTEN_TRACE_FLAG = "--listen-trace";
   /// <summary>Flag which indicates the program should exit on finish.
   /// </summary>
   public const string QUIT_ON_FINISH_FLAG = "--quit-on-finish";
@@ -102,6 +119,8 @@ public record TestEnvironment(
   /// coverage.
   /// </summary>
   public const string COVERAGE_FLAG = "--coverage";
+  /// <summary>Default value for listen-trace.</summary>
+  public const bool DEFAULT_LISTEN_TRACE = false;
   /// <summary>Default value for quit on finish.</summary>
   public const bool DEFAULT_QUIT_ON_FINISH = false;
   /// <summary>Default value for stop on error.</summary>
@@ -118,6 +137,7 @@ public record TestEnvironment(
   /// <param name="commandLineArgs">Command line args.</param>
   /// <returns>A new test environment.</returns>
   public static TestEnvironment From(string[] commandLineArgs) {
+    var listenTrace = DEFAULT_LISTEN_TRACE;
     var quitOnFinish = DEFAULT_QUIT_ON_FINISH;
     var stopOnError = DEFAULT_STOP_ON_ERROR;
     var sequential = DEFAULT_SEQUENTIAL;
@@ -126,13 +146,16 @@ public record TestEnvironment(
     string? testPatternToRun = null;
     foreach (var arg in commandLineArgs) {
       var clean = arg.Trim().Replace(" ", "");
-      var flag = clean.ToLower();
+      var flag = clean.ToLower(System.Globalization.CultureInfo.CurrentCulture);
       var value = !flag.EndsWith("=false");
       if (flag.StartsWith(TEST_FLAG)) {
         shouldRunTests = true;
         if (flag.StartsWith(TEST_FLAG + "=")) {
           testPatternToRun = clean[(TEST_FLAG.Length + 1)..];
         }
+      }
+      else if (flag.StartsWith(LISTEN_TRACE_FLAG)) {
+        listenTrace = true;
       }
       else if (flag.StartsWith(QUIT_ON_FINISH_FLAG)) {
         quitOnFinish = value;
@@ -149,6 +172,7 @@ public record TestEnvironment(
     }
     return new TestEnvironment(
       ShouldRunTests: shouldRunTests,
+      ListenTrace: listenTrace,
       QuitOnFinish: quitOnFinish,
       StopOnError: stopOnError,
       Sequential: sequential,

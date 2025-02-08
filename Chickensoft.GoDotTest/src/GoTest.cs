@@ -4,8 +4,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Chickensoft.Log;
 using Godot;
-using GoDotLog;
 
 /// <summary>
 /// <para>
@@ -49,7 +49,7 @@ public class GoTest {
 
   /// <summary>Default action to perform for exiting.</summary>
   public static Action<Node, int> DefaultOnExit { get; }
-    = (node, exitCode) => node.GetTree().Quit(exitCode);
+    = static (node, exitCode) => node.GetTree().Quit(exitCode);
 
   /// <summary>
   /// Force exit (for use when running coverage to work around Godot 4's exit
@@ -62,7 +62,7 @@ public class GoTest {
   /// <br />
   /// See coverlet docs about expected exit behavior: https://t.ly/A51Q
   /// </summary>
-  public static Action<Node, int> DefaultOnForceExit { get; } = (node, exitCode)
+  public static Action<Node, int> DefaultOnForceExit { get; } = static (node, exitCode)
     => System.Environment.Exit(exitCode);
 
   /// <summary>Action to perform for exiting.</summary>
@@ -99,10 +99,11 @@ public class GoTest {
     ILog? log = null,
     Func<ITestSuite, bool>? predicate = null
   ) {
-    var suiteFilter = predicate ?? (suite => true);
+    var suiteFilter = predicate ?? (static suite => true);
     env = Adapter.CreateTestEnvironment(env);
     log = Adapter.CreateLog(log);
     if (!env.ShouldRunTests) { return; }
+    using var listenerManager = new TraceListenerManager(env);
     var provider = Adapter.CreateProvider();
     var pattern = env.TestPatternToRun;
     var suites = (pattern == null)

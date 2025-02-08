@@ -3,8 +3,8 @@ namespace Chickensoft.GoDotTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chickensoft.Log;
 using GoDotCollections;
-using GoDotLog;
 
 /// <summary>
 /// Class which stores results for each test suite method.
@@ -59,7 +59,7 @@ public class TestReporter : ITestReporter {
   /// </summary>
   protected Dictionary<
     ITestSuite, Map<ITestMethod, Exception>
-  > Failures { get; } = new();
+  > Failures { get; } = [];
 
   /// <inheritdoc/>
   public bool HadError => Failures.Count > 0;
@@ -81,7 +81,7 @@ public class TestReporter : ITestReporter {
   /// The number of test methods which have failed to pass.
   /// </summary>
   public int NumFailingMethods
-    => Failures.Values.Sum(failingMethods => failingMethods.Count);
+    => Failures.Values.Sum(static failingMethods => failingMethods.Count);
 
   /// <summary>
   /// Create a test reporter.
@@ -147,7 +147,7 @@ public class TestReporter : ITestReporter {
   /// <inheritdoc/>
   public void OutputFinalReport() {
     var numFailingMethods = Failures.Values.Sum(
-      failingMethods => failingMethods.Count
+      static failingMethods => failingMethods.Count
     );
 
     if (HadError) {

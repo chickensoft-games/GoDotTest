@@ -1,7 +1,7 @@
 namespace Chickensoft.GoDotTest.Tests;
 
+using Chickensoft.Log;
 using Godot;
-using GoDotLog;
 using GoDotTest;
 using LightMock.Generator;
 using Shouldly;

@@ -2,10 +2,11 @@ namespace Chickensoft.GoDotTest.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using Chickensoft.Log;
 using Godot;
-using GoDotLog;
 using GoDotTest;
 using LightMock;
 using LightMock.Generator;
@@ -40,7 +41,7 @@ public class GoTestTest : TestClass {
   public async Task DoesNothingIfNotRunningTests() {
     var adapter = new Mock<TestAdapter>();
     GoTest.Adapter = adapter.Object;
-    var testEnv = TestEnvironment.From(Array.Empty<string>());
+    var testEnv = TestEnvironment.From([]);
     var log = new Mock<ILog>();
     var assembly = Assembly.GetExecutingAssembly();
     await GoTest.RunTests(assembly, TestScene, testEnv, log.Object);
@@ -49,7 +50,7 @@ public class GoTestTest : TestClass {
   [Test]
   public async Task ExitsWithFailingExitCodeWhenTestsFail() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--quit-on-finish" }
+      ["--run-tests=ahem", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -67,9 +68,35 @@ public class GoTestTest : TestClass {
   }
 
   [Test]
+  public async Task RemovesTraceListenerWhenTestsFail() {
+    // will be 1 in VSCode, 2 in VS (it adds its own DefaultTraceListener
+    // to run these tests)
+    var traceListenerCount = Trace.Listeners.Count;
+    var testEnv = TestEnvironment.From(
+      [
+        "--run-tests=ahem",
+        "--listen-trace",
+         "--quit-on-finish"
+      ]
+    );
+    var log = new Mock<ILog>();
+    var provider = new Mock<ITestProvider>();
+
+    SetupTest(testEnv, log, provider);
+
+    int? testExitCode = null;
+    GoTest.OnExit = (node, exitCode) => testExitCode = exitCode;
+
+    await GoTest.RunTests(
+      Assembly.GetExecutingAssembly(), TestScene, testEnv, log.Object
+    );
+    Trace.Listeners.Count.ShouldBe(traceListenerCount);
+  }
+
+  [Test]
   public async Task ExitsWithFailingExitCodeWhenTestsFailOnCoverage() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+      ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -88,7 +115,7 @@ public class GoTestTest : TestClass {
   [Test]
   public async Task TimeoutMillisecondSetterShouldHaveAnImpactWhenCreatingExecutor() {
     var testEnv = TestEnvironment.From(
-      new string[] { "--run-tests=ahem", "--coverage", "--quit-on-finish" }
+      ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
     var log = new Mock<ILog>();
     var provider = new Mock<ITestProvider>();
@@ -108,7 +135,7 @@ public class GoTestTest : TestClass {
     provider
           .Setup(provider => provider.GetTestSuitesByPattern(
             The<Assembly>.IsAnyValue, "ahem"
-          )).Returns(new List<ITestSuite>());
+          )).Returns([]);
 
     var reporter = new Mock<ITestReporter>();
     reporter.Setup(reporter => reporter.HadError).Returns(true);
