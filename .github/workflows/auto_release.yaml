@@ -1,10 +1,10 @@
 # This workflow will run whenever tests finish running. If tests pass, it will
 # look at the last commit message to see if it contains the phrase
-# "chore(deps): update all dependencies".
+# "chore(deps)".
 #
 # If it finds a commit with that phrase, and the testing workflow has passed,
 # it will automatically release a new version of the project by running the
-# publish workflow.
+# release workflow.
 #
 # The commit message phrase above is always used by renovatebot when opening
 # PR's to update dependencies. If you have renovatebot enabled and set to
@@ -31,7 +31,10 @@ jobs:
       should_release: ${{ steps.release.outputs.should_release }}
     steps:
       - name: 🧾 Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: 'recursive'
 
       - name: 🧑‍🔬 Check Test Results
         id: tests
@@ -43,7 +46,7 @@ jobs:
         run: |
           message=$(git log -1 --pretty=%B)
 
-          if [[ $message == *"chore(deps): update all dependencies"* ]]; then
+          if [[ $message == *"chore(deps)"* ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -65,11 +68,12 @@ jobs:
             echo "✋ Not creating a release."
           fi
 
-  release:
-    uses: './.github/workflows/publish.yaml'
+  trigger_release:
+    uses: './.github/workflows/release.yaml'
     needs: auto_release
     if: needs.auto_release.outputs.should_release == 'true'
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      GH_BASIC: ${{ secrets.GH_BASIC }}
     with:
       bump: patch
