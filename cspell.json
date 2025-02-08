@@ -25,6 +25,7 @@
     "contentfiles",
     "coreclr",
     "CYGWIN",
+    "devbuild",
     "endregion",
     "Gamedev",
     "globaltool",
