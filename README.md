@@ -124,7 +124,7 @@ Place the following `tasks.json` and `launch.json` inside a folder named `.vscod
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${env:GODOT4}",
+      "program": "${env:GODOT}",
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
@@ -134,7 +134,7 @@ Place the following `tasks.json` and `launch.json` inside a folder named `.vscod
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${env:GODOT4}",
+      "program": "${env:GODOT}",
       "args": [
         // These command line flags are used by GoDotTest to run tests.
         "--run-tests",
@@ -148,7 +148,7 @@ Place the following `tasks.json` and `launch.json` inside a folder named `.vscod
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${env:GODOT4}",
+      "program": "${env:GODOT}",
       "args": [
         // These command line flags are used by GoDotTest to run tests.
         "--run-tests=${fileBasenameNoExtension}",
@@ -170,7 +170,7 @@ To debug your tests from Visual Studio, place the following `launchSettings.json
   "profiles": {
     "Debug Tests": {
       "commandName": "Executable",
-      "executablePath": "%GODOT4%",
+      "executablePath": "%GODOT%",
       "commandLineArgs": "--run-tests --listen-trace --quit-on-finish",
       "workingDirectory": "."
     }
@@ -299,7 +299,7 @@ If your code is configured correctly to switch to the test scene when `--run-tes
 ```sh
 coverlet \
   "./.godot/mono/temp/bin/Debug" --verbosity detailed \
-  --target $GODOT4 \
+  --target $GODOT \
   --targetargs "--run-tests --coverage --quit-on-finish" \
   --format "opencover" \
   --output "./coverage/coverage.xml" \
