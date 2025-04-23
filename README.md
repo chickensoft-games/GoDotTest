@@ -288,7 +288,7 @@ GoDotTest is only a test provider and test execution system. Keeping the scope o
 
 For mocking, we recommend [LightMock.Generator]. It is similar in usage to the popular `Moq` library, but generates mocks at compile-time ensuring maximum compatibility in any .NET environment. To make LightMock's API even more closely resemble Moq's, you can use Chickensoft's [LightMoq] adapter.
 
-For integration tests, we recommend [GodotTestDriver](https://github.com/chickensoft-games/GodotTestDriver). GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
+For integration tests, we recommend [GodotTestDriver]. GodotTestDriver allows you to create drivers that allow you to simulate input, wait for the next frame, interact with UI elements, create custom test drivers, etc.
 
 ## Coverage
 
@@ -342,11 +342,11 @@ For more information about command line flags, see [`TestEnvironment.cs`](src/Te
 
 🐣 Package generated from a 🐤 Chickensoft Template — <https://chickensoft.games>
 
-[chickensoft-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/chickensoft_badge.svg
+[chickensoft-badge]: https://chickensoft.games/img/badges/chickensoft_badge.svg
 [chickensoft-website]: https://chickensoft.games
-[discord-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/discord_badge.svg
+[discord-badge]: https://chickensoft.games/img/badges/discord_badge.svg
 [discord]: https://discord.gg/gSjaPgMmYW
-[read-the-docs-badge]: https://raw.githubusercontent.com/chickensoft-games/chickensoft_site/main/static/img/badges/read_the_docs_badge.svg
+[read-the-docs-badge]: https://chickensoft.games/img/badges/read_the_docs_badge.svg
 [docs]: https://chickensoft.games/docs
 [line-coverage]: Chickensoft.GoDotTest.Tests/badges/line_coverage.svg
 [branch-coverage]: Chickensoft.GoDotTest.Tests/badges/branch_coverage.svg
@@ -357,5 +357,5 @@ For more information about command line flags, see [`TestEnvironment.cs`](src/Te
 [LightMoq]: https://github.com/chickensoft-games/LightMoq
 [LightMock.Generator]: https://github.com/anton-yashin/LightMock.Generator
 [TestCoverage]: https://github.com/chickensoft-games/GodotPackage#-test-coverage
-[GodotTestDriver]: https://github.com/derkork/godot-test-driver
+[GodotTestDriver]: https://github.com/chickensoft-games/GodotTestDriver
 [coverlet]: https://github.com/coverlet-coverage/coverlet
