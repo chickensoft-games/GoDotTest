@@ -2,7 +2,7 @@
   "profiles": {
     "Debug Tests": {
       "commandName": "Executable",
-      "executablePath": "%GODOT4%",
+      "executablePath": "%GODOT%",
       "commandLineArgs": "--run-tests --listen-trace --quit-on-finish",
       "workingDirectory": "."
     }
