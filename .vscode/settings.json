@@ -9,6 +9,10 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": false
   },
+  // Required to keep the C# language server from getting confused about which
+  // solution to open.
+  "dotnet.defaultSolution": "Chickensoft.Log.Godot.sln",
+  "editor.rulers": [80, 120],
   "csharp.semanticHighlighting.enabled": true,
   "editor.semanticHighlighting.enabled": true,
   // C# doc comment colorization gets lost with semantic highlighting, but we

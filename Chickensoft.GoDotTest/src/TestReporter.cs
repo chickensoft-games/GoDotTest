@@ -3,22 +3,22 @@ namespace Chickensoft.GoDotTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chickensoft.Collections;
 using Chickensoft.Log;
-using GoDotCollections;
 
 /// <summary>
 /// Class which stores results for each test suite method.
 /// </summary>
 public interface ITestReporter {
   /// <summary>True if an error was encountered in any test suite.</summary>
-  bool HadError { get; }
+  public bool HadError { get; }
   /// <summary>
   /// Called when an event concerning a test suite method has occurred.
   /// </summary>
   /// <param name="suite">Test suite which is running.</param>
   /// <param name="method">Test suite method which was executed.</param>
   /// <param name="methodEvent">Test event.</param>
-  void MethodUpdate(
+  public void MethodUpdate(
     ITestSuite suite, ITestMethod method, TestMethodEvent methodEvent
   );
 
@@ -27,18 +27,18 @@ public interface ITestReporter {
   /// </summary>
   /// <param name="suite">Test suite.</param>
   /// <param name="suiteEvent">Test suite event.</param>
-  void SuiteUpdate(ITestSuite suite, TestSuiteEvent suiteEvent);
+  public void SuiteUpdate(ITestSuite suite, TestSuiteEvent suiteEvent);
 
   /// <summary>
   /// Called when an event concerning the entire test system has occurred.
   /// </summary>
   /// <param name="testEvent">Test event which occurred.</param>
-  void Update(TestEvent testEvent);
+  public void Update(TestEvent testEvent);
 
   /// <summary>
   /// Called after tests have run to report the results.
   /// </summary>
-  void OutputFinalReport();
+  public void OutputFinalReport();
 }
 
 /// <summary>
@@ -180,8 +180,12 @@ public class TestReporter : ITestReporter {
   protected void AddFailure(
     ITestSuite suite, ITestMethod method, Exception e
   ) {
-    if (!Failures.ContainsKey(suite)) { Failures[suite] = new(); }
-    Failures[suite][method] = e;
+    if (!Failures.TryGetValue(suite, out var value)) {
+      value = [];
+      Failures[suite] = value;
+    }
+
+    value[method] = e;
   }
 
   /// <summary>
