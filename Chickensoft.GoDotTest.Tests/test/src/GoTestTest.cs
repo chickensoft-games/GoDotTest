@@ -133,7 +133,7 @@ public class GoTestTest : TestClass {
 
   private void SetupTest(TestEnvironment testEnv, Mock<ILog> log, Mock<ITestProvider> provider, int expectedTimeout = 10000) {
     provider
-          .Setup(provider => provider.GetTestSuitesByPattern(
+          .Setup(provider => provider.GetTestOpsByPattern(
             The<Assembly>.IsAnyValue, "ahem"
           )).Returns([]);
 
@@ -143,7 +143,7 @@ public class GoTestTest : TestClass {
     var executor = new Mock<ITestExecutor>();
     executor.Setup(
       executor => executor.Run(
-        TestScene, The<List<ITestSuite>>.IsAnyValue, reporter.Object
+        TestScene, The<List<TestOp>>.IsAnyValue, reporter.Object
       )
     ).Returns(Task.CompletedTask);
 

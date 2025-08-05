@@ -17,22 +17,22 @@ public interface ITestSuite {
   /// </summary>
   Type TestClassType { get; }
   /// <summary>List of setup methods defined in this test suite.</summary>
-  public List<ITestMethod> SetupMethods { get; }
+  List<ITestMethod> SetupMethods { get; }
   /// <summary>List of setup all methods defined in this test suite.</summary>
-  public List<ITestMethod> SetupAllMethods { get; }
+  List<ITestMethod> SetupAllMethods { get; }
   /// <summary>List of test methods defined in this test suite.</summary>
-  public List<ITestMethod> TestMethods { get; }
+  List<ITestMethod> TestMethods { get; }
   /// <summary>List of cleanup methods defined in this test suite.</summary>
-  public List<ITestMethod> CleanupMethods { get; }
+  List<ITestMethod> CleanupMethods { get; }
   /// <summary>
   /// List of cleanup all methods defined in this test suite.
   /// </summary>
-  public List<ITestMethod> CleanupAllMethods { get; }
+  List<ITestMethod> CleanupAllMethods { get; }
   /// <summary>
   /// Whether the remaining test methods in the suite should be skipped if
   /// an error occurs in one of the methods.
   /// </summary>
-  public bool Sequential { get; }
+  bool Sequential { get; }
   /// <summary>
   /// List of methods that are called when the test suite encounters an
   /// exception.

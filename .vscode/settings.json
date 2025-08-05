@@ -12,7 +12,10 @@
   // Required to keep the C# language server from getting confused about which
   // solution to open.
   "dotnet.defaultSolution": "Chickensoft.Log.Godot.sln",
-  "editor.rulers": [80, 120],
+  "editor.rulers": [
+    80,
+    120
+  ],
   "csharp.semanticHighlighting.enabled": true,
   "editor.semanticHighlighting.enabled": true,
   // C# doc comment colorization gets lost with semantic highlighting, but we
@@ -166,5 +169,8 @@
     }
   },
   "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
-  "dotnet.formatting.organizeImportsOnFormat": true
+  "dotnet.formatting.organizeImportsOnFormat": true,
+  "dotrush.roslyn.projectOrSolutionFiles": [
+    "/Users/joanna/Dropbox/GameDev/Chickensoft/GoDotTest/Chickensoft.GoDotTest.sln"
+  ]
 }

@@ -97,7 +97,7 @@ public class GoTest {
     Node sceneRoot,
     ITestEnvironment? env = null,
     ILog? log = null,
-    Func<ITestSuite, bool>? predicate = null
+    Func<TestOp, bool>? predicate = null
   ) {
     var suiteFilter = predicate ?? (static suite => true);
     env = Adapter.CreateTestEnvironment(env);
@@ -106,10 +106,10 @@ public class GoTest {
     using var listenerManager = new TraceListenerManager(env);
     var provider = Adapter.CreateProvider();
     var pattern = env.TestPatternToRun;
-    var suites = (pattern == null)
-      ? provider.GetTestSuites(assembly)
-      : provider.GetTestSuitesByPattern(assembly, pattern);
-    suites = suites.Where(suiteFilter).ToList();
+    var ops = (pattern == null)
+      ? provider.GetTestOps(assembly)
+      : provider.GetTestOpsByPattern(assembly, pattern);
+    ops = [.. ops.Where(suiteFilter)];
     var reporter = Adapter.CreateReporter(log);
     var methodExecutor = Adapter.CreateMethodExecutor();
     var executor = Adapter.CreateExecutor(
@@ -118,7 +118,7 @@ public class GoTest {
       sequential: env.Sequential,
       timeoutMilliseconds: TimeoutMilliseconds
     );
-    await executor.Run(sceneRoot, suites, reporter);
+    await executor.Run(sceneRoot, ops, reporter);
     if (env.QuitOnFinish) {
       var exitCode = reporter.HadError ? 1 : 0;
       var exitFn = env.Coverage ? OnForceExit : OnExit;

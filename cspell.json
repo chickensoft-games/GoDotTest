@@ -53,6 +53,7 @@
     "reportgenerator",
     "reporttypes",
     "Shouldly",
+    "skipautoprops",
     "subfolders",
     "targetargs",
     "targetdir",

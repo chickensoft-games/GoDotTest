@@ -19,25 +19,48 @@ public interface ITestProvider {
   /// </summary>
   /// <param name="assembly">Assembly to search for test suites in.</param>
   /// <returns>List of test suites.</returns>
-  List<ITestSuite> GetTestSuites(Assembly assembly);
+  List<TestOp> GetTestOps(Assembly assembly);
+
   /// <summary>
   /// Searches through each <see cref="TestSuite"/> in the assembly for
-  /// the first test suite type that matches the specified name exactly.
+  /// the first test suite type that matches the specified name exactly. You
+  /// can specify a test suite name such as `MyTestSuite` or even an individual
+  /// tests via `MyTestSuite.MyTestMethod`.
   /// </summary>
   /// <param name="assembly"></param>
   /// <param name="name">Test Suite type name.</param>
   /// <returns>The first test suite with an exact name match, if any.
   /// </returns>
-  ITestSuite? GetTestSuiteByName(Assembly assembly, string name);
+  TestOp? GetTestOpByName(Assembly assembly, string name);
+
   /// <summary>
   /// Searches through each <see cref="TestSuite"/> in the assembly for
-  /// each test suite type that matches the specified name glob (not case
-  /// sensitive).
+  /// each test suite type that matches the specified pattern. If you supply a
+  /// glob pattern, test operations for all of the matching suites will be
+  /// returned (case-insensitive). You may also specify a test suite name
+  /// such as `MyTestSuite` or even an individual test via
+  /// `MyTestSuite.MyTestMethod`.
   /// </summary>
   /// <param name="assembly"></param>
-  /// <param name="nameGlob">Name glob pattern to match.</param>
+  /// <param name="pattern">Name or glob pattern to match.</param>
   /// <returns>A list of matching test suites.</returns>
-  List<ITestSuite> GetTestSuitesByPattern(Assembly assembly, string nameGlob);
+  List<TestOp> GetTestOpsByPattern(
+    Assembly assembly, string pattern
+  );
+
+  /// <summary>
+  /// Gets an individual test method from the specified suite by name. Throws
+  /// an exception if the suite or method in the suite is not found.
+  /// </summary>
+  /// <param name="assembly">Assembly to search in.</param>
+  /// <param name="suiteName">Name of the test suite.</param>
+  /// <param name="methodName">Name of the test method.</param>
+  /// <returns>An individual test method operation.</returns>
+  TestOp? GetIndividualTestOp(
+    Assembly assembly,
+    string suiteName,
+    string methodName
+  );
 }
 
 /// <summary>
@@ -59,23 +82,115 @@ public class TestProvider : ITestProvider {
     };
 
   /// <inheritdoc/>
-  public List<ITestSuite> GetTestSuites(Assembly assembly) => assembly.GetTypes().Where(
+  public List<TestOp> GetTestOps(Assembly assembly) =>
+    [.. GetTestSuites(assembly).Select(
+      suite => new TestSuiteOp(suite)
+    )];
+
+  /// <inheritdoc/>
+  public TestOp? GetTestOpByName(
+    Assembly assembly, string name
+  ) {
+    var suiteName = name.Trim();
+    var methodName = string.Empty;
+
+    if (name.Contains('.')) {
+      // `TestSuiteName.MethodName` will run an individual test in a suite.
+      var split = name.Split('.');
+
+      if (string.IsNullOrEmpty(split[1])) {
+        return null;
+      }
+
+      suiteName = split[0];
+      methodName = split[1];
+
+      return GetIndividualTestOp(assembly, suiteName, methodName);
+    }
+
+    if (GetTestSuiteByName(assembly, name) is { } suite) {
+      return new TestSuiteOp(suite);
+    }
+    return null;
+  }
+
+  /// <inheritdoc/>
+  public List<TestOp> GetTestOpsByPattern(
+    Assembly assembly, string pattern
+  ) {
+    if (pattern.Contains('.')) {
+      return [GetTestOpByName(assembly, pattern)];
+    }
+
+    return [.. GetTestSuitesByPattern(assembly, pattern).Select(
+      suite => new TestSuiteOp(suite)
+    )];
+  }
+
+  /// <inheritdoc/>
+  public TestOp? GetIndividualTestOp(
+    Assembly assembly, string suiteName, string methodName
+  ) {
+    var suite = GetTestSuiteByName(assembly, suiteName);
+
+    if (suite is null) { return null; }
+
+    var method = suite.TestMethods.Find(
+      m => m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)
+    );
+
+    if (method is null) { return null; }
+
+    return new IndividualTestOp(suite, method);
+  }
+
+  /// <summary>
+  /// Gets a list of test suites in the given assembly.
+  /// </summary>
+  /// <param name="assembly">Assembly to search for test suites in.</param>
+  /// <returns>List of test suites.</returns>
+  public List<ITestSuite> GetTestSuites(Assembly assembly) =>
+    [.. assembly.GetTypes().Where(
       type =>
         type.IsSubclassOf(typeof(TestClass)) &&
         !type.IsAbstract
         && type.IsClass
-    ).Select(GetTestSuite).ToList();
+    ).Select(GetTestSuite)];
 
-  /// <inheritdoc/>
+  /// <summary>
+  /// Searches through each <see cref="TestSuite"/> in the assembly for
+  /// the first test suite type that matches the specified name exactly.
+  /// </summary>
+  /// <param name="assembly">Assembly to search in.</param>
+  /// <param name="name">Test Suite type name.</param>
+  /// <returns>The first test suite with an exact name match, if any.
+  /// </returns>
   public ITestSuite? GetTestSuiteByName(Assembly assembly, string name) =>
     GetTestSuites(assembly).Find(suite => suite.Name == name);
 
-  /// <inheritdoc/>
+  /// <summary>
+  /// Searches through each <see cref="TestSuite"/> in the assembly for
+  /// each test suite type that matches the specified name glob (not case
+  /// sensitive).
+  /// </summary>
+  /// <param name="assembly">Assembly to search in.</param>
+  /// <param name="nameGlob">Name glob pattern to match.</param>
+  /// <returns>A list of matching test suites.</returns>
   public List<ITestSuite> GetTestSuitesByPattern(
     Assembly assembly, string nameGlob
-  ) => GetTestSuites(assembly).Where(
+  ) => [.. GetTestSuites(assembly).Where(
     suite => MatchesGlob(suite.Name, nameGlob)
-  ).ToList();
+  )];
+
+  /// <summary>
+  /// Gets a test suite operation for the given test suite class type.
+  /// </summary>
+  /// <param name="classType">Subclass type of a test suite.</param>
+  /// <returns>The test suite operation.</returns>
+  public static TestSuiteOp GetTestSuiteOp(Type classType) {
+    var suite = GetTestSuite(classType);
+    return new TestSuiteOp(suite);
+  }
 
   /// <summary>
   /// Fetches a test suite from the given type.
@@ -111,7 +226,7 @@ public class TestProvider : ITestProvider {
   /// <returns>The list of annotated test methods.</returns>
   public static List<ITestMethod> GetMethods(
     Type classType, Type attributeType
-  ) => classType.GetMethods().Where(methodInfo =>
+  ) => [.. classType.GetMethods().Where(methodInfo =>
     methodInfo.GetCustomAttributes(attributeType, false).Length > 0
   ).OrderBy(
     methodInfo => (
@@ -123,7 +238,7 @@ public class TestProvider : ITestProvider {
     methodInfo => new TestMethod(
       methodInfo, attributeType.GetTestMethodType()
     )
-  ).Cast<ITestMethod>().ToList();
+  ).Cast<ITestMethod>()];
 
   /// <summary>
   /// Returns true if the specified method is asynchronous.

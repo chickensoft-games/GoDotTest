@@ -32,12 +32,12 @@ public interface ITestExecutor {
   /// Runs a test suite using the specified node as the scene root.
   /// </summary>
   /// <param name="sceneRoot">Test scene root node.</param>
-  /// <param name="suites">Test suites to run.</param>
+  /// <param name="ops">Test operations to execute.</param>
   /// <param name="reporter">Test reporter.</param>
   /// <returns>A future which completes when the test suite finishes
   /// execution.</returns>
   Task Run(
-    Node sceneRoot, List<ITestSuite> suites, ITestReporter reporter
+    Node sceneRoot, List<TestOp> ops, ITestReporter reporter
   );
 }
 
@@ -90,21 +90,14 @@ public class TestExecutor : ITestExecutor {
     TimeoutMilliseconds = timeoutMilliseconds;
   }
 
-  /// <summary>
-  /// Runs a list of test suites.
-  /// </summary>
-  /// <param name="sceneRoot">Test scene root node.</param>
-  /// <param name="suites">List of test suites to run.</param>
-  /// <param name="reporter">Test reporter to receive test events.</param>
-  /// <returns>Asynchronous task that completes when the test suites have
-  /// finished running.</returns>
+  /// <inheritdoc/>
   public async Task Run(
-    Node sceneRoot, List<ITestSuite> suites, ITestReporter reporter
+    Node sceneRoot, List<TestOp> ops, ITestReporter reporter
   ) {
     reporter.Update(TestEvent.Started);
     try {
-      foreach (var suite in suites) {
-        await Run(sceneRoot, suite, reporter);
+      foreach (var op in ops) {
+        await Run(sceneRoot, op, reporter);
       }
     }
     catch (StoppedException) {
@@ -119,17 +112,19 @@ public class TestExecutor : ITestExecutor {
   }
 
   /// <summary>
-  /// Runs a single test suite.
+  /// Executes a single test operation.
   /// </summary>
   /// <param name="sceneRoot">Test scene root node.</param>
-  /// <param name="suite">A test suites to run.</param>
+  /// <param name="op">A test operation to execute.</param>
   /// <param name="reporter">Test reporter to receive test events.</param>
-  /// <returns>Asynchronous task that completes when the test suite has
+  /// <returns>Asynchronous task that completes when the test operation has
   /// finished running.</returns>
   /// <exception cref="StoppedException"></exception>
   protected async Task Run(
-    Node sceneRoot, ITestSuite suite, ITestReporter reporter
+    Node sceneRoot, TestOp op, ITestReporter reporter
   ) {
+    var suite = op.Suite;
+
     var instance = (TestClass)Activator.CreateInstance(
       suite.TestClassType, sceneRoot
     )!;
@@ -140,12 +135,7 @@ public class TestExecutor : ITestExecutor {
     // followed by the list of [Cleanup] methods.
     // Finally, all methods tagged with [CleanupAll].
     // ---------------------------------------------------------------------
-    var allMethods = suite.SetupAllMethods.Concat(
-      suite.TestMethods.SelectMany(
-        testMethod =>
-          suite.SetupMethods.Append(testMethod).Concat(suite.CleanupMethods)
-      )
-    ).Concat(suite.CleanupAllMethods);
+    var allMethods = GetMethodExecutionSequence(op);
     var skip = false;
     var errorEncountered = false;
     reporter.SuiteUpdate(suite, TestSuiteEvent.Started);
@@ -201,5 +191,31 @@ public class TestExecutor : ITestExecutor {
         ? TestSuiteEvent.ErrorEncountered
         : TestSuiteEvent.Finished
       );
+  }
+
+  public static IEnumerable<ITestMethod> GetMethodExecutionSequence(TestOp op) {
+    var methods =
+        // Differentiate between the different types of test operations.
+        // For test suite operations, we want to run all the test methods in
+        // the suite. Otherwise, if it's an individual test operation, we just
+        // need to run the single test method (along with any setup/cleanup
+        // methods).
+        op switch {
+          IndividualTestOp individualOp => [individualOp.Method],
+          TestSuiteOp suiteOp => suiteOp.Suite.TestMethods,
+          _ => [] // never happens
+        };
+
+    if (methods.Count == 0) {
+      return [];
+    }
+
+    return op.Suite.SetupAllMethods.Concat(methods.SelectMany(
+        testMethod =>
+          op.Suite
+            .SetupMethods.Append(testMethod)
+            .Concat(op.Suite.CleanupMethods)
+      )
+    ).Concat(op.Suite.CleanupAllMethods);
   }
 }

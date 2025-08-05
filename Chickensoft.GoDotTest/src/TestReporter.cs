@@ -11,14 +11,14 @@ using Chickensoft.Log;
 /// </summary>
 public interface ITestReporter {
   /// <summary>True if an error was encountered in any test suite.</summary>
-  public bool HadError { get; }
+  bool HadError { get; }
   /// <summary>
   /// Called when an event concerning a test suite method has occurred.
   /// </summary>
   /// <param name="suite">Test suite which is running.</param>
   /// <param name="method">Test suite method which was executed.</param>
   /// <param name="methodEvent">Test event.</param>
-  public void MethodUpdate(
+  void MethodUpdate(
     ITestSuite suite, ITestMethod method, TestMethodEvent methodEvent
   );
 
@@ -27,18 +27,18 @@ public interface ITestReporter {
   /// </summary>
   /// <param name="suite">Test suite.</param>
   /// <param name="suiteEvent">Test suite event.</param>
-  public void SuiteUpdate(ITestSuite suite, TestSuiteEvent suiteEvent);
+  void SuiteUpdate(ITestSuite suite, TestSuiteEvent suiteEvent);
 
   /// <summary>
   /// Called when an event concerning the entire test system has occurred.
   /// </summary>
   /// <param name="testEvent">Test event which occurred.</param>
-  public void Update(TestEvent testEvent);
+  void Update(TestEvent testEvent);
 
   /// <summary>
   /// Called after tests have run to report the results.
   /// </summary>
-  public void OutputFinalReport();
+  void OutputFinalReport();
 }
 
 /// <summary>

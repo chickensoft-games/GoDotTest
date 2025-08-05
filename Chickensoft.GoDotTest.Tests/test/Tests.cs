@@ -12,6 +12,6 @@ public partial class Tests : Node2D {
     => _ = GoTest.RunTests(
       Assembly.GetExecutingAssembly(),
       this,
-      predicate: (suite) => !suite.Name.Contains("Ignored")
+      predicate: (op) => !op.Suite.Name.Contains("Ignored")
     );
 }

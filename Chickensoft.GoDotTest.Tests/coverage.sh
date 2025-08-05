@@ -26,14 +26,15 @@ dotnet build --no-restore
 
 coverlet \
   "./.godot/mono/temp/bin/Debug" --verbosity detailed \
-  --target $GODOT4 \
+  --target "$GODOT" \
   --targetargs "--run-tests --coverage --quit-on-finish" \
   --format "opencover" \
   --output "./coverage/coverage.xml" \
   --exclude-by-file "**/test/**/*.cs" \
   --exclude-by-file "**/*Microsoft.NET.Test.Sdk.Program.cs" \
   --exclude-by-file "**/Godot.SourceGenerators/**/*.cs" \
-  --exclude-assemblies-without-sources "missingall"
+  --exclude-assemblies-without-sources "missingall" \
+  --skipautoprops
 
 # Projects included via <ProjectReference> will be collected in code coverage.
 # If you want to exclude them, replace the string below with the names of

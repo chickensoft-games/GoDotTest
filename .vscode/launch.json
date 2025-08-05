@@ -1,5 +1,13 @@
 {
   "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "specificTest",
+      "type": "promptString",
+      "description": "Method name of the test in the active test suite.",
+      "default": ""
+    }
+  ],
   "configurations": [
     // For these launch configurations to work, you need to setup a GODOT
     // environment variable. On mac or linux, this can be done by adding
@@ -17,7 +25,6 @@
         "--quit-on-finish"
       ],
       "cwd": "${workspaceFolder}/Chickensoft.GoDotTest.Tests",
-      "stopAtEntry": false,
     },
     {
       "name": "🔬 Debug Current Test",
@@ -31,7 +38,19 @@
         "--quit-on-finish"
       ],
       "cwd": "${workspaceFolder}/Chickensoft.GoDotTest.Tests",
-      "stopAtEntry": false,
+    },
+    {
+      "name": "🧐 Debug Specific Test",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${env:GODOT}",
+      "args": [
+        // These command line flags are used by GoDotTest to run tests.
+        "--run-tests=${fileBasenameNoExtension}.${input:specificTest}",
+        "--quit-on-finish"
+      ],
+      "cwd": "${workspaceFolder}/Chickensoft.GoDotTest.Tests",
     },
   ]
 }
