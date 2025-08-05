@@ -37,13 +37,13 @@ public class TestExecutorTest : TestClass {
     // provider would be a real pain, and we know it works or this test
     // wouldn't even be running, so we'll just use one of its static methods.
     // Otherwise, this test would be much more involved.
-    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored));
-    suite.ShouldBeAssignableTo<ITestSuite>();
+    var op = TestProvider.GetTestSuiteOp(typeof(TestTestIgnored));
+    op.ShouldBeAssignableTo<TestSuiteOp>();
 
     var reporter = new Mock<ITestReporter>();
 
     await testExecutor.Run(
-      TestScene, [suite], reporter.Object
+      TestScene, [op], reporter.Object
     );
 
     Called.ShouldBe([
@@ -82,11 +82,11 @@ public class TestExecutorTest : TestClass {
 
     var reporter = new Mock<ITestReporter>();
 
-    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored2));
+    var ops = TestProvider.GetTestSuiteOp(typeof(TestTestIgnored2));
 
     await testExecutor.Run(
       sceneRoot: TestScene,
-      suites: [suite],
+      ops: [ops],
       reporter: reporter.Object
     );
 
@@ -125,14 +125,54 @@ public class TestExecutorTest : TestClass {
 
     var reporter = new Mock<ITestReporter>();
 
-    var suite = TestProvider.GetTestSuite(typeof(TestTestIgnored3));
+    var suite = TestProvider.GetTestSuiteOp(typeof(TestTestIgnored3));
 
     await testExecutor.Run(
       sceneRoot: TestScene,
-      suites: [
+      ops: [
         suite
       ],
       reporter: reporter.Object
     );
+  }
+
+  [Test]
+  public void GetMethodExecutionSequenceReturnsIndividualMethodSequence() {
+    var suite = new Mock<ITestSuite>();
+    var method = new Mock<ITestMethod>();
+
+    List<ITestMethod> setupAllMethods = [new Mock<ITestMethod>().Object];
+    List<ITestMethod> setupMethods = [new Mock<ITestMethod>().Object];
+    List<ITestMethod> cleanupMethods = [new Mock<ITestMethod>().Object];
+    List<ITestMethod> cleanupAllMethods = [new Mock<ITestMethod>().Object];
+
+    suite.Setup(suite => suite.SetupAllMethods).Returns(setupAllMethods);
+    suite.Setup(suite => suite.SetupMethods).Returns(setupMethods);
+    suite.Setup(suite => suite.CleanupMethods).Returns(cleanupMethods);
+    suite.Setup(suite => suite.CleanupAllMethods).Returns(cleanupAllMethods);
+
+    var op = new IndividualTestOp(
+      Suite: suite.Object,
+      Method: method.Object
+    );
+
+    TestExecutor.GetMethodExecutionSequence(op)
+      .ShouldBe([
+        setupAllMethods[0],
+        setupMethods[0],
+        method.Object,
+        cleanupMethods[0],
+        cleanupAllMethods[0]
+      ]);
+  }
+
+  private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite);
+
+  [Test]
+  public void GetMethodExecutionSequenceReturnsEmptySequence() {
+    var suite = new Mock<ITestSuite>();
+    var op = new FakeTestOp(Suite: suite.Object);
+
+    TestExecutor.GetMethodExecutionSequence(op).ShouldBe([]);
   }
 }
