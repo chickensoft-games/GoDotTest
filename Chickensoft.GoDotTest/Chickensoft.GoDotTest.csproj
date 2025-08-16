@@ -39,9 +39,9 @@
 
   <ItemGroup>
     <!-- Dependencies go here. -->
-    <PackageReference Include="Chickensoft.Collections" Version="2.0.2" />
+    <PackageReference Include="Chickensoft.Collections" Version="2.0.3" />
     <PackageReference Include="GodotSharp" Version="4.4.1" />
-    <PackageReference Include="Chickensoft.Log" Version="1.0.16" />
+    <PackageReference Include="Chickensoft.Log" Version="1.0.17" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
 
     <!-- Required for inheritdoc -->
