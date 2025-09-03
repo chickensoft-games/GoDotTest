@@ -69,11 +69,90 @@ Below is the test execution output GoDoTest shows for its own tests:
 
 ## Setup
 
+How you utilize GoDotTest will vary based on whether you are creating a game or a nuget package for use with Godot and C#.
+
+### Games
+
+In your main scene, you can tell GoDotTest to look at the command line arguments given to the Godot process and construct a test environment object that can be used to determine if tests should be run.
+
+If tests need to be run, you can instruct GoDotTest to find and execute tests in the current assembly.
+
+Because you typically do not want to include tests in release builds of your game, you can exclude all of the test files from the build by adding the following to your `.csproj` file (change `test/**/*` to the relative path of your test files within the project if they are not in a folder at the root called `test`):
+
+```xml
+<PropertyGroup>
+  <DefaultItemExcludes Condition="'$(Configuration)' == 'ExportRelease'">
+    $(DefaultItemExcludes);test/**/*
+  </DefaultItemExcludes>
+</PropertyGroup>
+```
+
+Add the following script to the main scene (the entry point) of your Godot game. If you already have a customized main scene, rename it to `Game.tscn` and make a new main scene that is completely empty. If you are making a 3D game, make the root a Node3D instead of a Node2D.
+
+Note that this script relies on your game's actual beginning scene to be `Game.tscn`: if you don't have one, you'll need to create one. If tests do not need to be run, your game will start and immediately switch to `Game.tscn`. Otherwise, the main scene will ask GoDotTest to find and run tests in the current assembly.
+
+```csharp
+namespace YourGame;
+
+using Godot;
+
+#if DEBUG
+using System.Reflection;
+using Chickensoft.GoDotTest;
+#endif
+
+public partial class Main : Node2D {
+#if DEBUG
+  public TestEnvironment Environment = default!;
+#endif
+
+  public override void _Ready() {
+#if DEBUG
+    // If this is a debug build, use GoDotTest to examine the
+    // command line arguments and determine if we should run tests.
+    Environment = TestEnvironment.From(OS.GetCmdlineArgs());
+    if (Environment.ShouldRunTests) {
+      CallDeferred("RunTests");
+      return;
+    }
+#endif
+    // If we don't need to run tests, we can just switch to the game scene.
+    GetTree().ChangeSceneToFile("res://src/Game.tscn");
+  }
+
+#if DEBUG
+  private void RunTests()
+    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this, Environment);
+#endif
+}
+```
+
+### Packages
+
+If you're creating a nuget package for use with Godot, you should create a separate test project that references your nuget package project.
+
+Inside your test project, create a main scene and add the following script to it.
+
+```csharp
+namespace MyProject.Tests;
+
+using System.Reflection;
+using Chickensoft.GoDotTest;
+using Godot;
+
+public partial class Tests : Node2D {
+  public override void _Ready()
+    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
+}
+```
+
+For best results, consider using the `dotnet new` [GodotPackage] template by Chickensoft to quickly create a new Godot C# package project that is already setup to work with GoDotTest.
+
+## Debugging (Visual Studio Code)
+
 You can debug tests in Godot from Visual Studio Code. To do this, you will need to specify the `GODOT` environment variable for the following launch configurations and scripts to work correctly. The `GODOT` variable should point to the path of the Godot executable.
 
 See the [Chickensoft Setup Guide][chickensoft-setup-guide] for more information about setting up your development environment for use with Godot and GoDotTest.
-
-## Debugging (Visual Studio Code)
 
 The following `launch.json` file provides launch configurations to debug the game, debug all the tests, or debug the currently open test in Visual Studio Code. To debug the currently open test, make sure the class name of the test matches the file name, as is typical in C#.
 
@@ -188,95 +267,14 @@ Create a `test` folder in your project and create a test scene in it. Add a C# s
 
 ```csharp
 using System.Reflection;
+using Chickensoft.GoDotTest;
 using Godot;
-using GoDotTest;
 
 public partial class Tests : Node2D {
   public override async void _Ready()
     => await GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
 }
 ```
-
-## Main Scene
-
-How you utilize GoDotTest will vary based on whether you are creating a game or a nuget package for use with Godot and C#.
-
-### Games
-
-In your main scene, you can tell GoDotTest to look at the command line arguments given to the Godot process and construct a test environment object that can be used to determine if tests should be run.
-
-If tests need to be run, you can instruct GoDotTest to find and execute tests in the current assembly.
-
-Because you typically do not want to include tests in release builds of your game, you can exclude all of the test files from the build by adding the following to your `.csproj` file (change `test/**/*` to the relative path of your test files within the project if they are not in a folder at the root called `test`):
-
-```xml
-<PropertyGroup>
-  <DefaultItemExcludes Condition="'$(Configuration)' == 'ExportRelease'">
-    $(DefaultItemExcludes);test/**/*
-  </DefaultItemExcludes>
-</PropertyGroup>
-```
-
-Add the following script to the main scene (the entry point) of your Godot game. If you already have a customized main scene, rename it to `Game.tscn` and make a new main scene that is completely empty. If you are making a 3D game, make the root a Node3D instead of a Node2D.
-
-Note that this script relies on your game's actual beginning scene to be `Game.tscn`: if you don't have one, you'll need to create one. If tests do not need to be run, your game will start and immediately switch to `Game.tscn`. Otherwise, the main scene will ask GoDotTest to find and run tests in the current assembly.
-
-```csharp
-namespace YourGame;
-
-using Godot;
-
-#if DEBUG
-using System.Reflection;
-using GoDotTest;
-#endif
-
-public partial class Main : Node2D {
-#if DEBUG
-  public TestEnvironment Environment = default!;
-#endif
-
-  public override void _Ready() {
-#if DEBUG
-    // If this is a debug build, use GoDotTest to examine the
-    // command line arguments and determine if we should run tests.
-    Environment = TestEnvironment.From(OS.GetCmdlineArgs());
-    if (Environment.ShouldRunTests) {
-      CallDeferred("RunTests");
-      return;
-    }
-#endif
-    // If we don't need to run tests, we can just switch to the game scene.
-    GetTree().ChangeSceneToFile("res://src/Game.tscn");
-  }
-
-#if DEBUG
-  private void RunTests()
-    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this, Environment);
-#endif
-}
-```
-
-### Packages
-
-If you're creating a nuget package for use with Godot, you should create a separate test project that references your nuget package project.
-
-Inside your test project, create a main scene and add the following script to it.
-
-```csharp
-namespace MyProject.Tests;
-
-using System.Reflection;
-using Godot;
-using GoDotTest;
-
-public partial class Tests : Node2D {
-  public override void _Ready()
-    => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
-}
-```
-
-For best results, consider using the `dotnet new` [GodotPackage] template by Chickensoft to quickly create a new Godot C# package project that is already setup to work with GoDotTest.
 
 ## Logging
 
@@ -336,7 +334,7 @@ If you need to customize how tests are loaded and run, you can use the code in [
 - `--sequential`: The presence of this flag indicates that subsequent test methods in a test suite should be skipped if an error occurs in a test suite method. Use this if your test methods rely on the previous test method completing successfully. This flag is ignored when using `--stop-on-error`.
 - `--coverage`: Required when running tests with the intent to collect coverage in Godot 4. Allows GoDotTest to force-exit so that coverlet picks up on the coverage correctly.
 
-For more information about command line flags, see [`TestEnvironment.cs`](src/TestEnvironment.cs).
+For more information about command line flags, see [`TestEnvironment.cs`](Chickensoft.GoDotTest/src/TestEnvironment.cs).
 
 ---
 
