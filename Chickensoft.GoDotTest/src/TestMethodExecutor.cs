@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 /// Test method executor for running a test method on a given test suite
 /// instance.
 /// </summary>
-public interface ITestMethodExecutor {
+public interface ITestMethodExecutor
+{
   /// <summary>
   /// Runs a test method on a given test suite instance with the given
   /// timeout.
@@ -23,15 +24,19 @@ public interface ITestMethodExecutor {
 /// <summary>
 /// Default test method executor.
 /// </summary>
-public class TestMethodExecutor : ITestMethodExecutor {
+public class TestMethodExecutor : ITestMethodExecutor
+{
   /// <inheritdoc/>
   public async Task Run(
     ITestMethod method, TestClass instance, int timeoutMilliseconds
-  ) {
-    if (timeoutMilliseconds is 0) {
+  )
+  {
+    if (timeoutMilliseconds is 0)
+    {
       await method.Invoke(instance);
     }
-    else {
+    else
+    {
       await method.Invoke(instance, timeoutMilliseconds);
     }
   }

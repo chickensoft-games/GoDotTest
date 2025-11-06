@@ -7,7 +7,8 @@ using System.Reflection;
 /// <summary>
 /// Represents a test suite (a class that extends <see cref="TestClass"/>.
 /// </summary>
-public interface ITestSuite {
+public interface ITestSuite
+{
   /// <summary>
   /// Name of the test class (determined by the class name).
   /// </summary>
@@ -43,7 +44,8 @@ public interface ITestSuite {
 /// <summary>
 /// Represents a suite of test methods (a test class).
 /// </summary>
-public class TestSuite : ITestSuite {
+public class TestSuite : ITestSuite
+{
   /// <inheritdoc/>
   public Type TestClassType { get; }
   /// <inheritdoc/>
@@ -83,7 +85,8 @@ public class TestSuite : ITestSuite {
     List<ITestMethod> cleanupMethods,
     List<ITestMethod> cleanupAllMethods,
     List<ITestMethod> failureMethods
-  ) {
+  )
+  {
     Sequential = info.GetCustomAttribute<SequentialAttribute>(false) != null;
     TestClassType = testClassType;
     Name = testClassType.Name;

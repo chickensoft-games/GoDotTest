@@ -5,7 +5,8 @@ using Godot;
 /// <summary>
 /// Represents a class which contains test methods.
 /// </summary>
-public abstract class TestClass {
+public abstract class TestClass
+{
   /// <summary>
   /// Test scene node. Use as you wish — just remember to clean up
   /// after yourself!
@@ -16,7 +17,8 @@ public abstract class TestClass {
   /// Creates a new test using the specified test scene.
   /// </summary>
   /// <param name="testScene"></param>
-  protected TestClass(Node testScene) {
+  protected TestClass(Node testScene)
+  {
     TestScene = testScene;
   }
 }

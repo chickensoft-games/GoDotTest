@@ -5,7 +5,8 @@ using System;
 /// <summary>
 /// Base class for all exceptions thrown by GoDotTest.
 /// </summary>
-public abstract class TestRunnerException : Exception {
+public abstract class TestRunnerException : Exception
+{
   /// <summary>
   /// Creates a new test runner exception with the specified message.
   /// </summary>
@@ -19,13 +20,15 @@ public abstract class TestRunnerException : Exception {
   /// <param name="message">Exception message.</param>
   /// <param name="innerException">Exception which occurred.</param>
   protected TestRunnerException(string message, Exception? innerException) :
-    base(message, innerException) { }
+    base(message, innerException)
+  { }
 }
 
 /// <summary>
 /// Exception thrown when a test class uses an async void test method.
 /// </summary>
-public class AsyncVoidException : TestRunnerException {
+public class AsyncVoidException : TestRunnerException
+{
   private const string MESSAGE =
     "Async void methods are not supported in tests. For more background on " +
     "the challenges posed by async void methods, see " +
@@ -35,13 +38,15 @@ public class AsyncVoidException : TestRunnerException {
   /// Creates a new async void exception.
   /// </summary>
   public AsyncVoidException() :
-    base(MESSAGE) { }
+    base(MESSAGE)
+  { }
 }
 
 /// <summary>
 /// Exception thrown when a test method takes too long to run.
 /// </summary>
-public class TestTimeoutException : TestRunnerException {
+public class TestTimeoutException : TestRunnerException
+{
   /// <summary>
   /// Creates a new test timeout exception.
   /// </summary>
@@ -54,7 +59,8 @@ public class TestTimeoutException : TestRunnerException {
 /// and the test environment indicates that no further tests should be run
 /// after encountering the first error.
 /// </summary>
-public class StoppedException : TestRunnerException {
+public class StoppedException : TestRunnerException
+{
   private const string MESSAGE =
     "Test execution stopped because of an error.";
 
@@ -63,5 +69,6 @@ public class StoppedException : TestRunnerException {
   /// </summary>
   /// <param name="innerException">Exception that occurred.</param>
   public StoppedException(Exception innerException) :
-    base(MESSAGE, innerException) { }
+    base(MESSAGE, innerException)
+  { }
 }

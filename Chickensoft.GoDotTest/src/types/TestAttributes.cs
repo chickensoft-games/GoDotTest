@@ -1,13 +1,14 @@
 namespace Chickensoft.GoDotTest;
 
-using JetBrains.Annotations;
 using System;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = false), MeansImplicitUse]
 
 /// <summary>Base class for test method attributes.</summary>
-public abstract class TestRunnerMethodAttribute : Attribute {
+public abstract class TestRunnerMethodAttribute : Attribute
+{
   /// <summary>
   /// Line the attribute was defined on.
   /// </summary>
@@ -16,7 +17,8 @@ public abstract class TestRunnerMethodAttribute : Attribute {
   /// Creates a new MethodAttribute with the specified line number.
   /// </summary>
   /// <param name="line">Line number.</param>
-  protected TestRunnerMethodAttribute([CallerLineNumber] int line = 0) {
+  protected TestRunnerMethodAttribute([CallerLineNumber] int line = 0)
+  {
     Line = line;
   }
 }
@@ -25,7 +27,8 @@ public abstract class TestRunnerMethodAttribute : Attribute {
 /// Attribute used to mark a method as a test.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class TestAttribute : TestRunnerMethodAttribute {
+public class TestAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new TestAttribute with the specified line number.
   /// </summary>
@@ -38,7 +41,8 @@ public class TestAttribute : TestRunnerMethodAttribute {
 /// tests run.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class SetupAllAttribute : TestRunnerMethodAttribute {
+public class SetupAllAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new SetupAllAttribute with the specified line number.
   /// </summary>
@@ -51,7 +55,8 @@ public class SetupAllAttribute : TestRunnerMethodAttribute {
 /// tests run.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class CleanupAllAttribute : TestRunnerMethodAttribute {
+public class CleanupAllAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new CleanupAllAttribute with the specified line number.
   /// </summary>
@@ -63,7 +68,8 @@ public class CleanupAllAttribute : TestRunnerMethodAttribute {
 /// Attribute used to mark a setup method to be called before each test runs.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class SetupAttribute : TestRunnerMethodAttribute {
+public class SetupAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new SetupAttribute with the specified line number.
   /// </summary>
@@ -75,7 +81,8 @@ public class SetupAttribute : TestRunnerMethodAttribute {
 /// Attribute used to mark a cleanup method to be called after each test runs.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class CleanupAttribute : TestRunnerMethodAttribute {
+public class CleanupAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new CleanupAttribute with the specified line number.
   /// </summary>
@@ -88,7 +95,8 @@ public class CleanupAttribute : TestRunnerMethodAttribute {
 /// failure.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class FailureAttribute : TestRunnerMethodAttribute {
+public class FailureAttribute : TestRunnerMethodAttribute
+{
   /// <summary>
   /// Creates a new FailureAttribute with the specified line number.
   /// </summary>
@@ -101,7 +109,8 @@ public class FailureAttribute : TestRunnerMethodAttribute {
 /// method. This overrides any global timeout settings.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class TimeoutAttribute : Attribute {
+public class TimeoutAttribute : Attribute
+{
   /// <summary>Test method timeout, in milliseconds.</summary>
   public int TimeoutMilliseconds { get; }
   /// <summary>
@@ -109,7 +118,8 @@ public class TimeoutAttribute : Attribute {
   /// </summary>
   /// <param name="timeoutMilliseconds">Number of milliseconds to wait
   /// before timing out.</param>
-  public TimeoutAttribute(int timeoutMilliseconds) {
+  public TimeoutAttribute(int timeoutMilliseconds)
+  {
     TimeoutMilliseconds = timeoutMilliseconds;
   }
 }
@@ -122,7 +132,8 @@ public class TimeoutAttribute : Attribute {
 /// be run.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class SequentialAttribute : Attribute {
+public class SequentialAttribute : Attribute
+{
   /// <summary>Create a new sequential attribute.</summary>
   public SequentialAttribute() { }
 }

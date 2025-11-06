@@ -4,11 +4,13 @@ using Godot;
 using GoDotTest;
 using Shouldly;
 
-public class TestEnvironmentTest : TestClass {
+public class TestEnvironmentTest : TestClass
+{
   public TestEnvironmentTest(Node testScene) : base(testScene) { }
 
   [Test]
-  public void ConstructsTestEnvironmentWithPatternFlag() {
+  public void ConstructsTestEnvironmentWithPatternFlag()
+  {
     var testEnvironment = TestEnvironment.From([
       "--run-tests=SomeTest"
     ]);
@@ -16,7 +18,8 @@ public class TestEnvironmentTest : TestClass {
   }
 
   [Test]
-  public void ConstructsTestEnvironmentWithSimpleFlags() {
+  public void ConstructsTestEnvironmentWithSimpleFlags()
+  {
     var args = new string[] {
       "--quit-on-finish",
       "--listen-trace",

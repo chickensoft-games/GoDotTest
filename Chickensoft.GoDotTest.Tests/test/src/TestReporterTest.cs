@@ -7,17 +7,20 @@ using GoDotTest;
 using LightMock.Generator;
 using LightMoq;
 
-public class TestReporterException : Exception {
+public class TestReporterException : Exception
+{
   public TestReporterException() : base("TestReporterException") { }
 
   public override string ToString() => "TestReporterException";
 }
 
-public class TestReporterTest : TestClass {
+public class TestReporterTest : TestClass
+{
   public TestReporterTest(Node testScene) : base(testScene) { }
 
   [Test]
-  public void MethodUpdatePassedLogs() {
+  public void MethodUpdatePassedLogs()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -35,7 +38,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void MethodUpdateSkipsStartedEventWhenNotATest() {
+  public void MethodUpdateSkipsStartedEventWhenNotATest()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -48,7 +52,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void MethodUpdateSkipsPassedEventWhenNotATest() {
+  public void MethodUpdateSkipsPassedEventWhenNotATest()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -63,7 +68,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void MethodUpdateLogsStartedEventForTest() {
+  public void MethodUpdateLogsStartedEventForTest()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -82,7 +88,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void MethodUpdateLogsFailedEvent() {
+  public void MethodUpdateLogsFailedEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -103,7 +110,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void MethodUpdateLogsSkippedEvent() {
+  public void MethodUpdateLogsSkippedEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -122,7 +130,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void SuiteUpdateLogsStartedEvent() {
+  public void SuiteUpdateLogsStartedEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -138,7 +147,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void SuiteUpdateLogsFinishedEvent() {
+  public void SuiteUpdateLogsFinishedEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -154,7 +164,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void SuiteUpdateLogsErrorEncounteredEvent() {
+  public void SuiteUpdateLogsErrorEncounteredEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -170,7 +181,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void UpdateLogsStartedEvent() {
+  public void UpdateLogsStartedEvent()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -180,7 +192,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void UpdateLogsFinishedEventWithSuccess() {
+  public void UpdateLogsFinishedEventWithSuccess()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
 
@@ -190,7 +203,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void UpdateLogsFinishedEventWithFailureAndOutputsErrors() {
+  public void UpdateLogsFinishedEventWithFailureAndOutputsErrors()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
     log.Setup(
@@ -221,7 +235,8 @@ public class TestReporterTest : TestClass {
   }
 
   [Test]
-  public void OutputsFinalSuccessfulReport() {
+  public void OutputsFinalSuccessfulReport()
+  {
     var log = new Mock<ILog>();
     var reporter = new TestReporter(log.Object);
     log.Setup(
@@ -243,7 +258,8 @@ public class TestReporterTest : TestClass {
     log.VerifyAll();
   }
 
-  private static Mock<ITestSuite> CreateSuite(string name = "TestSuite") {
+  private static Mock<ITestSuite> CreateSuite(string name = "TestSuite")
+  {
     var suite = new Mock<ITestSuite>();
     suite.Setup(static suite => suite.Name).Returns(name);
     return suite;
@@ -251,7 +267,8 @@ public class TestReporterTest : TestClass {
 
   private static Mock<ITestMethod> CreateMethod(
     TestMethodType type, string name = "Method"
-  ) {
+  )
+  {
     var method = new Mock<ITestMethod>();
     method.Setup(static method => method.Type).Returns(type);
     method.Setup(static method => method.Name).Returns(name);

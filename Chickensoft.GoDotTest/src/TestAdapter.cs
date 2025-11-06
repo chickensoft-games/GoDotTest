@@ -6,7 +6,8 @@ using Godot;
 /// <summary>
 /// Represents an object which constructs classes needed for testing.
 /// </summary>
-public interface ITestAdapter {
+public interface ITestAdapter
+{
   /// <summary>
   /// Creates a log or returns the given one.
   /// </summary>
@@ -63,7 +64,8 @@ public interface ITestAdapter {
 /// <summary>
 /// Default test adapter implementation.
 /// </summary>
-public class TestAdapter : ITestAdapter {
+public class TestAdapter : ITestAdapter
+{
   /// <inheritdoc/>
   public ILog CreateLog(ILog? log) => log ?? new Log(nameof(GoTest), new TraceWriter());
   /// <inheritdoc/>

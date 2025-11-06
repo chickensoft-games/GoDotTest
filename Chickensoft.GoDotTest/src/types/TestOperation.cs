@@ -11,7 +11,8 @@ public abstract record TestOp(ITestSuite Suite);
 /// </summary>
 /// <param name="Suite">The test suite that contains this test.</param>
 /// <param name="Method">The test method to be executed.</param>
-public record IndividualTestOp(ITestSuite Suite, ITestMethod Method) : TestOp(Suite);
+public record IndividualTestOp(ITestSuite Suite, ITestMethod Method)
+  : TestOp(Suite);
 
 /// <summary>
 /// Represents a test suite operation to be executed.

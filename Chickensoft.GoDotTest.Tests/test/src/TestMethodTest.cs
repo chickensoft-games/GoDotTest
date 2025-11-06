@@ -5,11 +5,13 @@ using Godot;
 using GoDotTest;
 using Shouldly;
 
-public class TestMethodTest : TestClass {
+public class TestMethodTest : TestClass
+{
   public TestMethodTest(Node testScene) : base(testScene) { }
 
   [Test]
-  public void RespectsTimeout() {
+  public void RespectsTimeout()
+  {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(MethodWithTimeout)
     )!;
@@ -18,7 +20,8 @@ public class TestMethodTest : TestClass {
   }
 
   [Test]
-  public async Task WillNotInvokeAsyncVoidMethod() {
+  public async Task WillNotInvokeAsyncVoidMethod()
+  {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(AsyncVoidMethod)
     )!;
@@ -27,7 +30,8 @@ public class TestMethodTest : TestClass {
   }
 
   [Test]
-  public async Task ThrowsTimeoutExceptionWhenTestTimesOut() {
+  public async Task ThrowsTimeoutExceptionWhenTestTimesOut()
+  {
     var method = typeof(TestMethodTest).GetMethod(
       nameof(MethodWithTimeout)
     )!;

@@ -31,7 +31,8 @@ using Godot;
 /// coverage, please see the accompanying documentation.
 /// </para>
 /// </summary>
-public class GoTest {
+public class GoTest
+{
   /// <summary>
   /// The default test adapter used to construct test system objects.
   /// </summary>
@@ -98,11 +99,13 @@ public class GoTest {
     ITestEnvironment? env = null,
     ILog? log = null,
     Func<TestOp, bool>? predicate = null
-  ) {
+  )
+  {
     var suiteFilter = predicate ?? (static suite => true);
     env = Adapter.CreateTestEnvironment(env);
     log = Adapter.CreateLog(log);
-    if (!env.ShouldRunTests) { return; }
+    if (!env.ShouldRunTests)
+    { return; }
     using var listenerManager = new TraceListenerManager(env);
     var provider = Adapter.CreateProvider();
     var pattern = env.TestPatternToRun;
@@ -119,7 +122,8 @@ public class GoTest {
       timeoutMilliseconds: TimeoutMilliseconds
     );
     await executor.Run(sceneRoot, ops, reporter);
-    if (env.QuitOnFinish) {
+    if (env.QuitOnFinish)
+    {
       var exitCode = reporter.HadError ? 1 : 0;
       var exitFn = env.Coverage ? OnForceExit : OnExit;
       exitFn(sceneRoot, exitCode);

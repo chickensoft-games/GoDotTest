@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Godot;
 using GoDotTest;
 
-public class TestTestIgnored : TestClass {
+public class TestTestIgnored : TestClass
+{
   public TestTestIgnored(Node testScene) : base(testScene) { }
 
   [SetupAll]
-  public void SetupAll() {
+  public void SetupAll()
+  {
     // This test will also be run stand-alone by the framework since it extends
     // TestClass, so we need to prevent doubling up the record of invocations.
     TestExecutorTest.Called.Clear();
@@ -23,7 +25,8 @@ public class TestTestIgnored : TestClass {
   public void Test() => TestExecutorTest.Called.Add("Test");
 
   [Test]
-  public void FailingTest() {
+  public void FailingTest()
+  {
     TestExecutorTest.Called.Add("FailingTest");
     throw new InvalidOperationException("FailingTest");
   }
@@ -38,7 +41,8 @@ public class TestTestIgnored : TestClass {
   public void Failure() => TestExecutorTest.Called.Add("Failure");
 
   [Failure]
-  public void FailingFailure() {
+  public void FailingFailure()
+  {
     TestExecutorTest.Called.Add("FailingFailure");
     throw new InvalidOperationException("FailingFailure");
   }
@@ -48,7 +52,8 @@ public class TestTestIgnored : TestClass {
 }
 
 [Sequential]
-public class TestTestIgnored2 : TestClass {
+public class TestTestIgnored2 : TestClass
+{
   public TestTestIgnored2(Node testScene) : base(testScene) { }
 
   [Test]
@@ -61,7 +66,8 @@ public class TestTestIgnored2 : TestClass {
   public void CleanupAll() { }
 }
 
-public class TestTestIgnored3 : TestClass {
+public class TestTestIgnored3 : TestClass
+{
   public TestTestIgnored3(Node testScene) : base(testScene) { }
 
   [Test]
