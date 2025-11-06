@@ -10,7 +10,8 @@ using Godot;
 /// Component which runs individual test methods on a test suite, in the
 /// correct order.
 /// </summary>
-public interface ITestExecutor {
+public interface ITestExecutor
+{
   /// <summary>
   /// Whether the test executor should stop at the first exception it
   /// encounters.
@@ -48,7 +49,8 @@ public interface ITestExecutor {
 /// Cleanup methods are called before and after each test method,
 /// respectively.
 /// </summary>
-public class TestExecutor : ITestExecutor {
+public class TestExecutor : ITestExecutor
+{
   /// <summary>
   /// If true, the test executor will stop executing test methods after the
   /// first error occurs.
@@ -83,7 +85,8 @@ public class TestExecutor : ITestExecutor {
     bool stopOnError,
     bool sequential,
     int timeoutMilliseconds = 0
-  ) {
+  )
+  {
     _methodExecutor = methodExecutor;
     StopOnError = stopOnError;
     Sequential = sequential;
@@ -93,19 +96,24 @@ public class TestExecutor : ITestExecutor {
   /// <inheritdoc/>
   public async Task Run(
     Node sceneRoot, List<TestOp> ops, ITestReporter reporter
-  ) {
+  )
+  {
     reporter.Update(TestEvent.Started);
-    try {
-      foreach (var op in ops) {
+    try
+    {
+      foreach (var op in ops)
+      {
         await Run(sceneRoot, op, reporter);
       }
     }
-    catch (StoppedException) {
+    catch (StoppedException)
+    {
       // The only exception thrown by `Run` is a StoppedException.
       // We don't need to do anything here — test execution is already stopped
       // by the time we get here.
     }
-    finally {
+    finally
+    {
       reporter.Update(TestEvent.Finished);
       reporter.OutputFinalReport();
     }
@@ -122,7 +130,8 @@ public class TestExecutor : ITestExecutor {
   /// <exception cref="StoppedException"></exception>
   protected async Task Run(
     Node sceneRoot, TestOp op, ITestReporter reporter
-  ) {
+  )
+  {
     var suite = op.Suite;
 
     var instance = (TestClass)Activator.CreateInstance(
@@ -139,39 +148,48 @@ public class TestExecutor : ITestExecutor {
     var skip = false;
     var errorEncountered = false;
     reporter.SuiteUpdate(suite, TestSuiteEvent.Started);
-    foreach (var method in allMethods) {
-      try {
+    foreach (var method in allMethods)
+    {
+      try
+      {
         var isCleanupMethod =
           method.Type is TestMethodType.Cleanup or TestMethodType.CleanupAll;
         var skipCurrentMethod = skip && !isCleanupMethod;
-        if (skipCurrentMethod) {
+        if (skipCurrentMethod)
+        {
           reporter.MethodUpdate(suite, method, TestMethodEvent.Skipped());
         }
-        else {
+        else
+        {
           reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
           await _methodExecutor.Run(method, instance, TimeoutMilliseconds);
           reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
         }
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
         errorEncountered = true;
         var exception = e.InnerException ?? e;
         reporter.MethodUpdate(
           suite, method, TestMethodEvent.Failed(exception)
         );
-        if (Sequential || suite.Sequential) { skip = true; }
+        if (Sequential || suite.Sequential)
+        { skip = true; }
 
         // Run every error handling method on the suite when an error is
         // encountered.
-        foreach (var failureMethod in suite.FailureMethods) {
-          try {
+        foreach (var failureMethod in suite.FailureMethods)
+        {
+          try
+          {
             reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
             await _methodExecutor.Run(
               failureMethod, instance, TimeoutMilliseconds
             );
             reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
           }
-          catch (Exception failureException) {
+          catch (Exception failureException)
+          {
             failureException =
               failureException.InnerException ?? failureException;
             reporter.MethodUpdate(
@@ -180,7 +198,8 @@ public class TestExecutor : ITestExecutor {
           }
         }
 
-        if (StopOnError) {
+        if (StopOnError)
+        {
           throw new StoppedException(exception);
         }
       }
@@ -193,20 +212,23 @@ public class TestExecutor : ITestExecutor {
       );
   }
 
-  public static IEnumerable<ITestMethod> GetMethodExecutionSequence(TestOp op) {
+  public static IEnumerable<ITestMethod> GetMethodExecutionSequence(TestOp op)
+  {
     var methods =
         // Differentiate between the different types of test operations.
         // For test suite operations, we want to run all the test methods in
         // the suite. Otherwise, if it's an individual test operation, we just
         // need to run the single test method (along with any setup/cleanup
         // methods).
-        op switch {
+        op switch
+        {
           IndividualTestOp individualOp => [individualOp.Method],
           TestSuiteOp suiteOp => suiteOp.Suite.TestMethods,
           _ => [] // never happens
         };
 
-    if (methods.Count == 0) {
+    if (methods.Count == 0)
+    {
       return [];
     }
 

@@ -1,9 +1,13 @@
 namespace Chickensoft.GoDotTest;
 
+using System;
+using System.Globalization;
+
 /// <summary>
 /// Test environment used by the test system.
 /// </summary>
-public interface ITestEnvironment {
+public interface ITestEnvironment
+{
   /// <summary>
   /// OS command line arguments.
   /// </summary>
@@ -96,7 +100,8 @@ public record TestEnvironment(
   bool Coverage,
   string? TestPatternToRun,
   string[] CommandLineArgs
-) : ITestEnvironment {
+) : ITestEnvironment
+{
   /// <summary>Flag which indicates tests should be run.</summary>
   public const string TEST_FLAG = "--run-tests";
   /// <summary>Flag which indicates the environment will capture trace
@@ -136,7 +141,8 @@ public record TestEnvironment(
   /// </summary>
   /// <param name="commandLineArgs">Command line args.</param>
   /// <returns>A new test environment.</returns>
-  public static TestEnvironment From(string[] commandLineArgs) {
+  public static TestEnvironment From(string[] commandLineArgs)
+  {
     var listenTrace = DEFAULT_LISTEN_TRACE;
     var quitOnFinish = DEFAULT_QUIT_ON_FINISH;
     var stopOnError = DEFAULT_STOP_ON_ERROR;
@@ -144,29 +150,47 @@ public record TestEnvironment(
     var coverage = DEFAULT_COVERAGE;
     var shouldRunTests = false;
     string? testPatternToRun = null;
-    foreach (var arg in commandLineArgs) {
+    foreach (var arg in commandLineArgs)
+    {
       var clean = arg.Trim().Replace(" ", "");
-      var flag = clean.ToLower(System.Globalization.CultureInfo.CurrentCulture);
-      var value = !flag.EndsWith("=false");
-      if (flag.StartsWith(TEST_FLAG)) {
+      var flag = clean.ToLower(CultureInfo.CurrentCulture);
+      var value = !flag.EndsWith("=false", StringComparison.InvariantCulture);
+      if (flag.StartsWith(TEST_FLAG, StringComparison.InvariantCulture))
+      {
         shouldRunTests = true;
-        if (flag.StartsWith(TEST_FLAG + "=")) {
+        if (flag.StartsWith(TEST_FLAG + "=", StringComparison.InvariantCulture))
+        {
           testPatternToRun = clean[(TEST_FLAG.Length + 1)..];
         }
       }
-      else if (flag.StartsWith(LISTEN_TRACE_FLAG)) {
+      else if (
+        flag.StartsWith(LISTEN_TRACE_FLAG, StringComparison.InvariantCulture)
+      )
+      {
         listenTrace = true;
       }
-      else if (flag.StartsWith(QUIT_ON_FINISH_FLAG)) {
+      else if (
+        flag.StartsWith(QUIT_ON_FINISH_FLAG, StringComparison.InvariantCulture)
+      )
+      {
         quitOnFinish = value;
       }
-      else if (flag.StartsWith(STOP_ON_ERROR_FLAG)) {
+      else if (
+        flag.StartsWith(STOP_ON_ERROR_FLAG, StringComparison.InvariantCulture)
+      )
+      {
         stopOnError = value;
       }
-      else if (flag.StartsWith(SEQUENTIAL_FLAG)) {
+      else if (
+        flag.StartsWith(SEQUENTIAL_FLAG, StringComparison.InvariantCulture)
+      )
+      {
         sequential = value;
       }
-      else if (flag.StartsWith(COVERAGE_FLAG)) {
+      else if (
+        flag.StartsWith(COVERAGE_FLAG, StringComparison.InvariantCulture)
+      )
+      {
         coverage = value;
       }
     }

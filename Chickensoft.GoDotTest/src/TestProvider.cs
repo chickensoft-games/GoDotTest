@@ -11,7 +11,8 @@ using System.Text.RegularExpressions;
 /// Test provider interface responsible for finding test suites in the
 /// current assembly.
 /// </summary>
-public interface ITestProvider {
+public interface ITestProvider
+{
   /// <summary>
   /// Loads all test suites from the given assembly. A test suite is a
   /// subclass of <see cref="TestClass"/> containing methods annotated with
@@ -67,13 +68,15 @@ public interface ITestProvider {
 /// Test provider implementation responsible for finding test suites in the
 /// current assembly.
 /// </summary>
-public class TestProvider : ITestProvider {
+public class TestProvider : ITestProvider
+{
   /// <summary>
   /// Mapping of test method attribute types to their corresponding test
   /// method type enum.
   /// </summary>
   protected readonly Dictionary<Type, TestMethodType> _testMethodTypes =
-    new() {
+    new()
+    {
       [typeof(SetupAllAttribute)] = TestMethodType.SetupAll,
       [typeof(SetupAttribute)] = TestMethodType.Setup,
       [typeof(TestAttribute)] = TestMethodType.Test,
@@ -90,25 +93,26 @@ public class TestProvider : ITestProvider {
   /// <inheritdoc/>
   public TestOp? GetTestOpByName(
     Assembly assembly, string name
-  ) {
-    var suiteName = name.Trim();
-    var methodName = string.Empty;
-
-    if (name.Contains('.')) {
+  )
+  {
+    if (name.Contains('.'))
+    {
       // `TestSuiteName.MethodName` will run an individual test in a suite.
       var split = name.Split('.');
 
-      if (string.IsNullOrEmpty(split[1])) {
+      if (string.IsNullOrEmpty(split[1]))
+      {
         return null;
       }
 
-      suiteName = split[0];
-      methodName = split[1];
+      var suiteName = split[0];
+      var methodName = split[1];
 
       return GetIndividualTestOp(assembly, suiteName, methodName);
     }
 
-    if (GetTestSuiteByName(assembly, name) is { } suite) {
+    if (GetTestSuiteByName(assembly, name) is { } suite)
+    {
       return new TestSuiteOp(suite);
     }
     return null;
@@ -117,9 +121,15 @@ public class TestProvider : ITestProvider {
   /// <inheritdoc/>
   public List<TestOp> GetTestOpsByPattern(
     Assembly assembly, string pattern
-  ) {
-    if (pattern.Contains('.')) {
-      return [GetTestOpByName(assembly, pattern)];
+  )
+  {
+    if (pattern.Contains('.'))
+    {
+      var op = GetTestOpByName(assembly, pattern) ??
+        throw new ArgumentException(
+          $"{pattern} in {assembly} does not match any test op"
+        );
+      return [op];
     }
 
     return [.. GetTestSuitesByPattern(assembly, pattern).Select(
@@ -130,16 +140,19 @@ public class TestProvider : ITestProvider {
   /// <inheritdoc/>
   public TestOp? GetIndividualTestOp(
     Assembly assembly, string suiteName, string methodName
-  ) {
+  )
+  {
     var suite = GetTestSuiteByName(assembly, suiteName);
 
-    if (suite is null) { return null; }
+    if (suite is null)
+    { return null; }
 
     var method = suite.TestMethods.Find(
       m => m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)
     );
 
-    if (method is null) { return null; }
+    if (method is null)
+    { return null; }
 
     return new IndividualTestOp(suite, method);
   }
@@ -187,7 +200,8 @@ public class TestProvider : ITestProvider {
   /// </summary>
   /// <param name="classType">Subclass type of a test suite.</param>
   /// <returns>The test suite operation.</returns>
-  public static TestSuiteOp GetTestSuiteOp(Type classType) {
+  public static TestSuiteOp GetTestSuiteOp(Type classType)
+  {
     var suite = GetTestSuite(classType);
     return new TestSuiteOp(suite);
   }
@@ -197,7 +211,8 @@ public class TestProvider : ITestProvider {
   /// </summary>
   /// <param name="classType">Subclass type of a test suite.</param>
   /// <returns>The test suite.</returns>
-  public static ITestSuite GetTestSuite(Type classType) {
+  public static ITestSuite GetTestSuite(Type classType)
+  {
     var setupMethods = GetMethods(classType, typeof(SetupAttribute));
     var setupAllMethods = GetMethods(classType, typeof(SetupAllAttribute));
     var testMethods = GetMethods(classType, typeof(TestAttribute));

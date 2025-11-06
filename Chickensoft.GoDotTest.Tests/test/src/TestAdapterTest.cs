@@ -6,11 +6,13 @@ using GoDotTest;
 using LightMock.Generator;
 using Shouldly;
 
-public class TestAdapterTest : TestClass {
+public class TestAdapterTest : TestClass
+{
   public TestAdapterTest(Node testScene) : base(testScene) { }
 
   [Test]
-  public void CreateLogUsesLog() {
+  public void CreateLogUsesLog()
+  {
     var adapter = new TestAdapter();
     var log = new Mock<ILog>();
     var logObject = log.Object;
@@ -18,49 +20,55 @@ public class TestAdapterTest : TestClass {
   }
 
   [Test]
-  public void CreateLogCreatesLog() {
+  public void CreateLogCreatesLog()
+  {
     var adapter = new TestAdapter();
     adapter.CreateLog(null).ShouldBeAssignableTo<ILog>();
   }
 
   [Test]
-  public void CreateTestEnvironmentUsesEnvironment() {
+  public void CreateTestEnvironmentUsesEnvironment()
+  {
     var adapter = new TestAdapter();
     var env = new Mock<ITestEnvironment>();
     adapter.CreateTestEnvironment(env.Object).ShouldBe(env.Object);
   }
 
   [Test]
-  public void CreateTestEnvironmentCreatesEnvironment() {
+  public void CreateTestEnvironmentCreatesEnvironment()
+  {
     var adapter = new TestAdapter();
     adapter.CreateTestEnvironment(null)
       .ShouldBeAssignableTo<ITestEnvironment>();
   }
 
   [Test]
-  public void CreateProviderCreatesProvider() {
+  public void CreateProviderCreatesProvider()
+  {
     var adapter = new TestAdapter();
     adapter.CreateProvider().ShouldBeAssignableTo<ITestProvider>();
   }
 
   [Test]
-  public void CreateReporterCreatesReporter() {
+  public void CreateReporterCreatesReporter()
+  {
     var adapter = new TestAdapter();
     var log = new Mock<ILog>();
     adapter.CreateReporter(log.Object).ShouldBeAssignableTo<ITestReporter>();
   }
 
   [Test]
-  public void CreateMethodExecutorCreatesMethodExecutor() {
+  public void CreateMethodExecutorCreatesMethodExecutor()
+  {
     var adapter = new TestAdapter();
     adapter.CreateMethodExecutor().ShouldBeAssignableTo<ITestMethodExecutor>();
   }
 
   [Test]
-  public void CreateExecutorCreatesExecutor() {
+  public void CreateExecutorCreatesExecutor()
+  {
     var adapter = new TestAdapter();
     var methodExecutor = new Mock<ITestMethodExecutor>();
-    var log = new Mock<ILog>();
     adapter.CreateExecutor(methodExecutor.Object, false, false, 0)
       .ShouldBeAssignableTo<ITestExecutor>();
   }

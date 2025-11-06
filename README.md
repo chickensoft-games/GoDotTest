@@ -31,7 +31,8 @@ using Chickensoft.GoDotTest;
 using Chickensoft.Log;
 using Godot;
 
-public class ExampleTest : TestClass {
+public class ExampleTest : TestClass
+{
   private readonly ILog _log = new Log(nameof(ExampleTest), new TraceWriter());
 
   public ExampleTest(Node testScene) : base(testScene) { }
@@ -231,17 +232,20 @@ using System.Reflection;
 using GoDotTest;
 #endif
 
-public partial class Main : Node2D {
+public partial class Main : Node2D
+{
 #if DEBUG
   public TestEnvironment Environment = default!;
 #endif
 
-  public override void _Ready() {
+  public override void _Ready()
+  {
 #if DEBUG
     // If this is a debug build, use GoDotTest to examine the
     // command line arguments and determine if we should run tests.
     Environment = TestEnvironment.From(OS.GetCmdlineArgs());
-    if (Environment.ShouldRunTests) {
+    if (Environment.ShouldRunTests)
+    {
       CallDeferred("RunTests");
       return;
     }
@@ -270,7 +274,8 @@ using System.Reflection;
 using Godot;
 using GoDotTest;
 
-public partial class Tests : Node2D {
+public partial class Tests : Node2D
+{
   public override void _Ready()
     => _ = GoTest.RunTests(Assembly.GetExecutingAssembly(), this);
 }

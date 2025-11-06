@@ -6,10 +6,12 @@ using Godot;
 using GoDotTest;
 using Shouldly;
 
-public class TestProviderTest : TestClass {
+public class TestProviderTest : TestClass
+{
   public TestProviderTest(Node testScene) : base(testScene) { }
   [Test]
-  public void GetTestOpByNameGetsSuiteWithName() {
+  public void GetTestOpByNameGetsSuiteWithName()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetTestOpByName(assembly, nameof(TestTestIgnored));
@@ -18,7 +20,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetTestOpByNameReturnsNullForNonexistentSuite() {
+  public void GetTestOpByNameReturnsNullForNonexistentSuite()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetTestOpByName(assembly, "NonexistentSuite");
@@ -26,7 +29,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetTestOpByNameReturnsNullWhenNothingAfterDot() {
+  public void GetTestOpByNameReturnsNullWhenNothingAfterDot()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetTestOpByName(assembly, nameof(TestTestIgnored) + ".");
@@ -34,7 +38,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetTestOpByNameReturnsIndividualTestOpWhenMethodSpecified() {
+  public void GetTestOpByNameReturnsIndividualTestOpWhenMethodSpecified()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetTestOpByName(
@@ -48,7 +53,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetTestOpsByPatternGetsOps() {
+  public void GetTestOpsByPatternGetsOps()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var suites = provider.GetTestOpsByPattern(assembly, "TestTest*");
@@ -60,7 +66,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetTestOpsByPatternGetsTestOpsByNameIfDotInPattern() {
+  public void GetTestOpsByPatternGetsTestOpsByNameIfDotInPattern()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var suites = provider.GetTestOpsByPattern(
@@ -75,7 +82,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetIndividualTestOpRespectsSuiteAndMethodName() {
+  public void GetIndividualTestOpRespectsSuiteAndMethodName()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
 
@@ -93,7 +101,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetIndividualTestOpReturnsNullIfSuiteNameNotFound() {
+  public void GetIndividualTestOpReturnsNullIfSuiteNameNotFound()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetIndividualTestOp(
@@ -104,7 +113,8 @@ public class TestProviderTest : TestClass {
   }
 
   [Test]
-  public void GetIndividualTestOpReturnsNullIfMethodNameNotFound() {
+  public void GetIndividualTestOpReturnsNullIfMethodNameNotFound()
+  {
     var provider = new TestProvider();
     var assembly = Assembly.GetExecutingAssembly();
     var op = provider.GetIndividualTestOp(

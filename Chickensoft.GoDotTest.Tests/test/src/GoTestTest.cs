@@ -13,12 +13,14 @@ using LightMock.Generator;
 using LightMoq;
 using Shouldly;
 
-public class TestTestAdapter : TestAdapter {
+public class TestTestAdapter : TestAdapter
+{
   public Action<Mock<ITestExecutor>> OnExecutorCreated;
 
   public TestTestAdapter(
     Action<Mock<ITestExecutor>> onExecutorCreated
-  ) {
+  )
+  {
     OnExecutorCreated = onExecutorCreated;
   }
 
@@ -27,18 +29,21 @@ public class TestTestAdapter : TestAdapter {
       bool stopOnError,
       bool sequential,
       int timeoutMilliseconds
-    ) {
+    )
+  {
     var executor = new Mock<ITestExecutor>();
     OnExecutorCreated?.Invoke(executor);
     return executor.Object;
   }
 }
 
-public class GoTestTest : TestClass {
+public class GoTestTest : TestClass
+{
   public GoTestTest(Node testScene) : base(testScene) { }
 
   [Test]
-  public async Task DoesNothingIfNotRunningTests() {
+  public async Task DoesNothingIfNotRunningTests()
+  {
     var adapter = new Mock<TestAdapter>();
     GoTest.Adapter = adapter.Object;
     var testEnv = TestEnvironment.From([]);
@@ -48,7 +53,8 @@ public class GoTestTest : TestClass {
   }
 
   [Test]
-  public async Task ExitsWithFailingExitCodeWhenTestsFail() {
+  public async Task ExitsWithFailingExitCodeWhenTestsFail()
+  {
     var testEnv = TestEnvironment.From(
       ["--run-tests=ahem", "--quit-on-finish"]
     );
@@ -68,7 +74,8 @@ public class GoTestTest : TestClass {
   }
 
   [Test]
-  public async Task RemovesTraceListenerWhenTestsFail() {
+  public async Task RemovesTraceListenerWhenTestsFail()
+  {
     // will be 1 in VSCode, 2 in VS (it adds its own DefaultTraceListener
     // to run these tests)
     var traceListenerCount = Trace.Listeners.Count;
@@ -94,7 +101,8 @@ public class GoTestTest : TestClass {
   }
 
   [Test]
-  public async Task ExitsWithFailingExitCodeWhenTestsFailOnCoverage() {
+  public async Task ExitsWithFailingExitCodeWhenTestsFailOnCoverage()
+  {
     var testEnv = TestEnvironment.From(
       ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
@@ -113,7 +121,8 @@ public class GoTestTest : TestClass {
   }
 
   [Test]
-  public async Task TimeoutMillisecondSetterShouldHaveAnImpactWhenCreatingExecutor() {
+  public async Task TimeoutMillisecondSetterShouldHaveAnImpactWhenCreatingExecutor()
+  {
     var testEnv = TestEnvironment.From(
       ["--run-tests=ahem", "--coverage", "--quit-on-finish"]
     );
@@ -131,7 +140,8 @@ public class GoTestTest : TestClass {
     GoTest.TimeoutMilliseconds = 10000;
   }
 
-  private void SetupTest(TestEnvironment testEnv, Mock<ILog> log, Mock<ITestProvider> provider, int expectedTimeout = 10000) {
+  private void SetupTest(TestEnvironment testEnv, Mock<ILog> log, Mock<ITestProvider> provider, int expectedTimeout = 10000)
+  {
     provider
           .Setup(provider => provider.GetTestOpsByPattern(
             The<Assembly>.IsAnyValue, "ahem"
@@ -171,7 +181,8 @@ public class GoTestTest : TestClass {
   /// Put the default adapter back once we're done testing the test system.
   /// </summary>
   [CleanupAll]
-  public void CleanupAll() {
+  public void CleanupAll()
+  {
     GoTest.Adapter = GoTest.DefaultAdapter;
     GoTest.OnExit = GoTest.DefaultOnExit;
     GoTest.OnForceExit = GoTest.DefaultOnForceExit;

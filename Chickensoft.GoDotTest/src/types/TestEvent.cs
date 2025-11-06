@@ -4,7 +4,8 @@ using System;
 
 /// <summary>Represents an event in the entire test system.
 /// </summary>
-public enum TestEvent {
+public enum TestEvent
+{
   /// <summary>Test execution has started.</summary>
   Started,
   /// <summary>Test execution has finished.</summary>
@@ -12,7 +13,8 @@ public enum TestEvent {
 }
 
 /// <summary>Represents an event in a test suite.</summary>
-public enum TestSuiteEvent {
+public enum TestSuiteEvent
+{
   /// <summary>Test suite execution has started.</summary>
   Started,
   /// <summary>Test suite execution has finished successfully.</summary>
@@ -22,7 +24,8 @@ public enum TestSuiteEvent {
 }
 
 /// <summary>Represents a test method execution result.</summary>
-public abstract class TestMethodEvent {
+public abstract class TestMethodEvent
+{
   private static readonly TestMethodPassedEvent _passed = new();
   private static readonly TestMethodSkippedEvent _skipped = new();
   private static readonly TestMethodStartedEvent _started = new();
@@ -49,7 +52,8 @@ public class TestMethodStartedEvent : TestMethodEvent { }
 public class TestMethodPassedEvent : TestMethodEvent { }
 
 /// <summary>Represents a test which failed during execution.</summary>
-public class TestMethodFailedEvent : TestMethodEvent {
+public class TestMethodFailedEvent : TestMethodEvent
+{
   /// <summary>
   /// Exception that occurred while running the test method.
   /// </summary>
@@ -60,7 +64,8 @@ public class TestMethodFailedEvent : TestMethodEvent {
   /// </summary>
   /// <param name="failureException">Exception that occurred while running the
   /// test method.</param>
-  public TestMethodFailedEvent(Exception failureException) {
+  public TestMethodFailedEvent(Exception failureException)
+  {
     FailureException = failureException;
   }
 }

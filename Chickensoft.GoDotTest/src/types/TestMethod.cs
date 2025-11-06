@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 /// <summary>
 /// Represents a test method type.
 /// </summary>
-public enum TestMethodType {
+public enum TestMethodType
+{
   /// <summary>
   /// Setup all test method, runs once before all test methods in the suite.
   /// </summary>
@@ -32,9 +33,11 @@ public enum TestMethodType {
 /// <summary>
 /// Represents test method types.
 /// </summary>
-public static class TestMethodTypes {
+public static class TestMethodTypes
+{
   private static readonly Dictionary<Type, TestMethodType> _testMethodTypes
-    = new() {
+    = new()
+    {
       [typeof(SetupAllAttribute)] = TestMethodType.SetupAll,
       [typeof(SetupAttribute)] = TestMethodType.Setup,
       [typeof(TestAttribute)] = TestMethodType.Test,
@@ -60,7 +63,8 @@ public static class TestMethodTypes {
 /// Represents a test or utility (Setup, Cleanup, SetupAll, CleanupAll)
 /// method in a <see cref="TestClass"/>.
 /// </summary>
-public interface ITestMethod {
+public interface ITestMethod
+{
   /// <summary>Name of the test method.</summary>
   string Name { get; }
 
@@ -93,7 +97,8 @@ public interface ITestMethod {
 /// <summary>
 /// Default implementation of a test class method.
 /// </summary>
-public class TestMethod : ITestMethod {
+public class TestMethod : ITestMethod
+{
   private readonly MethodInfo _testMethod;
   /// <inheritdoc/>
   public string Name { get; }
@@ -109,7 +114,8 @@ public class TestMethod : ITestMethod {
   /// </summary>
   /// <param name="testMethod">Method info of the test method.</param>
   /// <param name="type"></param>
-  public TestMethod(MethodInfo testMethod, TestMethodType type) {
+  public TestMethod(MethodInfo testMethod, TestMethodType type)
+  {
     _testMethod = testMethod;
     Name = testMethod.Name;
     IsAsync
@@ -117,28 +123,34 @@ public class TestMethod : ITestMethod {
         != null;
     var customTimeout =
       testMethod.GetCustomAttribute<TimeoutAttribute>(false);
-    if (customTimeout != null) {
+    if (customTimeout != null)
+    {
       TimeoutMilliseconds = customTimeout.TimeoutMilliseconds;
     }
     Type = type;
   }
 
   /// <inheritdoc/>
-  public async Task Invoke(TestClass testInstance) {
-    if (IsAsync) {
-      if (_testMethod.ReturnType == typeof(void)) {
+  public async Task Invoke(TestClass testInstance)
+  {
+    if (IsAsync)
+    {
+      if (_testMethod.ReturnType == typeof(void))
+      {
         throw new AsyncVoidException();
       }
       await (Task)_testMethod.Invoke(testInstance, null)!;
     }
-    else {
+    else
+    {
       // Invoke test method synchronously when possible.
       _testMethod.Invoke(testInstance, null);
     }
   }
 
   /// <inheritdoc/>
-  public async Task Invoke(TestClass testInstance, int timeoutMilliseconds) {
+  public async Task Invoke(TestClass testInstance, int timeoutMilliseconds)
+  {
     // Implementation credit: https://stackoverflow.com/a/22078975
     using var timeoutCancellationTokenSource = new CancellationTokenSource();
     var task = Invoke(testInstance);
@@ -150,12 +162,14 @@ public class TestMethod : ITestMethod {
         timeoutCancellationTokenSource.Token
       )
     );
-    if (completedTask == task) {
+    if (completedTask == task)
+    {
       timeoutCancellationTokenSource.Cancel();
       // Re-await task to propagate exceptions correctly.
       await task;
     }
-    else {
+    else
+    {
       throw new TestTimeoutException($"Test method [{Name}] timed out.");
     }
   }

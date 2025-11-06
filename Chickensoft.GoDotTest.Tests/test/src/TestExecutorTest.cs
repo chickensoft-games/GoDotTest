@@ -12,7 +12,8 @@ using Shouldly;
 
 // Test the test system using itself to test itself.
 
-public class TestExecutorTest : TestClass {
+public class TestExecutorTest : TestClass
+{
   public TestExecutorTest(Node testScene) : base(testScene) { }
 
   // Test data shared between TestTest and ourselves.
@@ -20,7 +21,8 @@ public class TestExecutorTest : TestClass {
   public static readonly List<string> Called = [];
 
   [Test]
-  public async Task RunsASingleTestSuiteForReal() {
+  public async Task RunsASingleTestSuiteForReal()
+  {
     var methodExecutor = new TestMethodExecutor();
     var testExecutor = new TestExecutor(
       methodExecutor: methodExecutor,
@@ -61,7 +63,8 @@ public class TestExecutorTest : TestClass {
   }
 
   [Test]
-  public async Task RunStopsOnError() {
+  public async Task RunStopsOnError()
+  {
     var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
@@ -94,7 +97,8 @@ public class TestExecutorTest : TestClass {
   }
 
   [Test]
-  public async Task RunSkipsSubsequentOnSequentialWhenErrorOccurs() {
+  public async Task RunSkipsSubsequentOnSequentialWhenErrorOccurs()
+  {
     var methodExecutor = new Mock<ITestMethodExecutor>();
 
     methodExecutor.Setup(
@@ -137,7 +141,8 @@ public class TestExecutorTest : TestClass {
   }
 
   [Test]
-  public void GetMethodExecutionSequenceReturnsIndividualMethodSequence() {
+  public void GetMethodExecutionSequenceReturnsIndividualMethodSequence()
+  {
     var suite = new Mock<ITestSuite>();
     var method = new Mock<ITestMethod>();
 
@@ -169,7 +174,8 @@ public class TestExecutorTest : TestClass {
   private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite);
 
   [Test]
-  public void GetMethodExecutionSequenceReturnsEmptySequence() {
+  public void GetMethodExecutionSequenceReturnsEmptySequence()
+  {
     var suite = new Mock<ITestSuite>();
     var op = new FakeTestOp(Suite: suite.Object);
 
