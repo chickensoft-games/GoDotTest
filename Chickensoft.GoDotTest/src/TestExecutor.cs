@@ -214,18 +214,7 @@ public class TestExecutor : ITestExecutor
 
   public static IEnumerable<ITestMethod> GetMethodExecutionSequence(TestOp op)
   {
-    var methods =
-        // Differentiate between the different types of test operations.
-        // For test suite operations, we want to run all the test methods in
-        // the suite. Otherwise, if it's an individual test operation, we just
-        // need to run the single test method (along with any setup/cleanup
-        // methods).
-        op switch
-        {
-          IndividualTestOp individualOp => [individualOp.Method],
-          TestSuiteOp suiteOp => suiteOp.Suite.TestMethods,
-          _ => [] // never happens
-        };
+    var methods = op.TestMethods;
 
     if (methods.Count == 0)
     {

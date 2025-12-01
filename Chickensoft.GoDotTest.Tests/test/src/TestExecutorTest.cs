@@ -171,12 +171,16 @@ public class TestExecutorTest : TestClass
       ]);
   }
 
-  private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite);
+  private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite)
+  {
+    public override List<ITestMethod> TestMethods => Suite.TestMethods;
+  }
 
   [Test]
   public void GetMethodExecutionSequenceReturnsEmptySequence()
   {
     var suite = new Mock<ITestSuite>();
+    suite.Setup(s => s.TestMethods).Returns([]);
     var op = new FakeTestOp(Suite: suite.Object);
 
     TestExecutor.GetMethodExecutionSequence(op).ShouldBe([]);
