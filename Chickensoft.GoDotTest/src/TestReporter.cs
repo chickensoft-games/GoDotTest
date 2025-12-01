@@ -172,7 +172,7 @@ public class TestReporter : ITestReporter
       {
         foreach (var method in methods.Keys)
         {
-          var e = methods[method]!;
+          var e = methods[method];
           Log.Print(
             Prefix(suite, method, BAD) + $"Error occurred: {e.Message}"
           );
