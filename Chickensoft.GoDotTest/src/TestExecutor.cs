@@ -182,18 +182,18 @@ public class TestExecutor : ITestExecutor
         {
           try
           {
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
+            reporter.MethodUpdate(suite, failureMethod, TestMethodEvent.Started());
             await _methodExecutor.Run(
               failureMethod, instance, TimeoutMilliseconds
             );
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
+            reporter.MethodUpdate(suite, failureMethod, TestMethodEvent.Passed());
           }
           catch (Exception failureException)
           {
             failureException =
               failureException.InnerException ?? failureException;
             reporter.MethodUpdate(
-              suite, method, TestMethodEvent.Failed(failureException)
+              suite, failureMethod, TestMethodEvent.Failed(failureException)
             );
           }
         }
@@ -214,18 +214,7 @@ public class TestExecutor : ITestExecutor
 
   public static IEnumerable<ITestMethod> GetMethodExecutionSequence(TestOp op)
   {
-    var methods =
-        // Differentiate between the different types of test operations.
-        // For test suite operations, we want to run all the test methods in
-        // the suite. Otherwise, if it's an individual test operation, we just
-        // need to run the single test method (along with any setup/cleanup
-        // methods).
-        op switch
-        {
-          IndividualTestOp individualOp => [individualOp.Method],
-          TestSuiteOp suiteOp => suiteOp.Suite.TestMethods,
-          _ => [] // never happens
-        };
+    var methods = op.TestMethods;
 
     if (methods.Count == 0)
     {

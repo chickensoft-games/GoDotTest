@@ -171,14 +171,62 @@ public class TestExecutorTest : TestClass
       ]);
   }
 
-  private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite);
+  private sealed record FakeTestOp(ITestSuite Suite) : TestOp(Suite)
+  {
+    public override List<ITestMethod> TestMethods => Suite.TestMethods;
+  }
 
   [Test]
   public void GetMethodExecutionSequenceReturnsEmptySequence()
   {
     var suite = new Mock<ITestSuite>();
+    suite.Setup(s => s.TestMethods).Returns([]);
     var op = new FakeTestOp(Suite: suite.Object);
 
     TestExecutor.GetMethodExecutionSequence(op).ShouldBe([]);
+  }
+
+  [Test]
+  public async Task DoesNotMarkFailedMethodPassedWhenFailureHandlerExists()
+  {
+    var methodExecutor = new Mock<ITestMethodExecutor>();
+    var testSuite = new Mock<ITestSuite>();
+
+    methodExecutor.Setup(
+      static exe => exe.Run(
+        The<ITestMethod>.Is(
+          static method => method.Name == nameof(TestTestIgnored.FailingTest)
+        ),
+        The<TestClass>.IsAnyValue,
+        The<int>.IsAnyValue
+      )
+    ).Throws(static () => new InvalidOperationException("Ahem"));
+
+    var testExecutor = new TestExecutor(
+      methodExecutor: methodExecutor.Object,
+      stopOnError: true,
+      sequential: false
+    );
+
+    var reporter = new Mock<ITestReporter>();
+
+    var ops = TestProvider.GetTestSuiteOp(typeof(TestTestIgnored));
+
+    await testExecutor.Run(
+      sceneRoot: TestScene,
+      ops: [ops],
+      reporter: reporter.Object
+    );
+
+    reporter.Assert(
+      r => r.MethodUpdate(
+        ops.Suite,
+        The<ITestMethod>.Is(
+          method => method.Name == nameof(TestTestIgnored.FailingTest)
+        ),
+        TestMethodEvent.Passed()
+      ),
+      Invoked.Never
+    );
   }
 }
