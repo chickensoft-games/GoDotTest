@@ -182,18 +182,18 @@ public class TestExecutor : ITestExecutor
         {
           try
           {
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Started());
+            reporter.MethodUpdate(suite, failureMethod, TestMethodEvent.Started());
             await _methodExecutor.Run(
               failureMethod, instance, TimeoutMilliseconds
             );
-            reporter.MethodUpdate(suite, method, TestMethodEvent.Passed());
+            reporter.MethodUpdate(suite, failureMethod, TestMethodEvent.Passed());
           }
           catch (Exception failureException)
           {
             failureException =
               failureException.InnerException ?? failureException;
             reporter.MethodUpdate(
-              suite, method, TestMethodEvent.Failed(failureException)
+              suite, failureMethod, TestMethodEvent.Failed(failureException)
             );
           }
         }
