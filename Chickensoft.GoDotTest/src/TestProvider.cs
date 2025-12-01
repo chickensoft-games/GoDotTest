@@ -70,20 +70,6 @@ public interface ITestProvider
 /// </summary>
 public class TestProvider : ITestProvider
 {
-  /// <summary>
-  /// Mapping of test method attribute types to their corresponding test
-  /// method type enum.
-  /// </summary>
-  protected readonly Dictionary<Type, TestMethodType> _testMethodTypes =
-    new()
-    {
-      [typeof(SetupAllAttribute)] = TestMethodType.SetupAll,
-      [typeof(SetupAttribute)] = TestMethodType.Setup,
-      [typeof(TestAttribute)] = TestMethodType.Test,
-      [typeof(CleanupAttribute)] = TestMethodType.Cleanup,
-      [typeof(CleanupAllAttribute)] = TestMethodType.CleanupAll,
-    };
-
   /// <inheritdoc/>
   public List<TestOp> GetTestOps(Assembly assembly) =>
     [.. GetTestSuites(assembly).Select(
