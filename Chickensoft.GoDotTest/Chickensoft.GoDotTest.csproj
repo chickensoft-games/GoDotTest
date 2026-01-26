@@ -40,7 +40,7 @@
   <ItemGroup>
     <!-- Dependencies go here. -->
     <PackageReference Include="Chickensoft.Collections" Version="3.1.4" />
-    <PackageReference Include="GodotSharp" Version="4.5.1" />
+    <PackageReference Include="GodotSharp" Version="4.6.0" />
     <PackageReference Include="Chickensoft.Log" Version="2.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
 
