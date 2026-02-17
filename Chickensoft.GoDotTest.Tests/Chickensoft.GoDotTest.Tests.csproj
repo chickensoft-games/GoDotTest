@@ -14,7 +14,7 @@
       .generated
     </CompilerGeneratedFilesOutputPath>
     -->
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
