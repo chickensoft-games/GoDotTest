@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         name: 🧾 Checkout
 
-      - uses: streetsidesoftware/cspell-action@v8
+      - uses: streetsidesoftware/cspell-action@v9
         name: 📝 Check Spelling
         with:
           config: './cspell.json'
