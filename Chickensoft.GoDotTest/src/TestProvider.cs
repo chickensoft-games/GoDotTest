@@ -39,8 +39,9 @@ public interface ITestProvider
   /// each test suite type that matches the specified pattern. If you supply a
   /// glob pattern, test operations for all of the matching suites will be
   /// returned (case-insensitive). You may also specify a test suite name
-  /// such as `MyTestSuite` or even an individual test via
-  /// `MyTestSuite.MyTestMethod`.
+  /// such as `MyTestSuite` or even an individual test via `MyTestSuite`
+  /// followed by a method name or glob pattern, e.g. `MyTestSuite.MyTest`
+  /// or `MyTestSuite.MyTest*`.
   /// </summary>
   /// <param name="assembly"></param>
   /// <param name="pattern">Name or glob pattern to match.</param>
@@ -111,11 +112,33 @@ public class TestProvider : ITestProvider
   {
     if (pattern.Contains('.'))
     {
-      var op = GetTestOpByName(assembly, pattern) ??
+      // `TestSuitePattern.MethodPattern` filters individual test methods.
+      var split = pattern.Split('.', 2);
+      var suitePattern = split[0];
+      var methodPattern = split[1];
+
+      if (string.IsNullOrEmpty(methodPattern))
+      {
         throw new ArgumentException(
           $"{pattern} in {assembly} does not match any test op"
         );
-      return [op];
+      }
+
+      var ops = GetTestSuitesByPattern(assembly, suitePattern)
+        .SelectMany(suite => suite.TestMethods
+          .Where(method => MatchesGlob(method.Name, methodPattern))
+          .Select(method => (TestOp)new IndividualTestOp(suite, method))
+        )
+        .ToList();
+
+      if (ops.Count == 0)
+      {
+        throw new ArgumentException(
+          $"{pattern} in {assembly} does not match any test op"
+        );
+      }
+
+      return ops;
     }
 
     return [.. GetTestSuitesByPattern(assembly, pattern).Select(
